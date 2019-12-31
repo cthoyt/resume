@@ -9,4 +9,6 @@ For a more full history of my see my [Scholia](https://tools.wmflabs.org/scholia
 
 To build as a PDF, clone the repository and use the following command:
 
+```bash
 $ latexmk -pdf -pvc main
+```
