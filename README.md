@@ -5,7 +5,7 @@ Europe). Click [here](https://github.com/cthoyt/resume/raw/master/main.pdf)
 to get the PDF of the latest build from GitHub.
 
 For a more full history, see my [website](https://cthoyt.com), my [Wikidata](https://www.wikidata.org/wiki/Q47475003)
-entrie, and my [Scholia](https://tools.wmflabs.org/scholia/author/Q47475003) page.
+entry, and my [Scholia](https://tools.wmflabs.org/scholia/author/Q47475003) page.
 
 ## Build
 
