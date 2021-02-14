@@ -9,9 +9,9 @@ entry, and my [Scholia](https://tools.wmflabs.org/scholia/author/Q47475003) page
 
 ## Build
 
-To build my résumé a PDF, clone the repository and use the following command:
+To build my résumé as a PDF, clone the repository and use the following command:
 
-```bash
+```shell
 $ git clone https://github.com/cthoyt/resume.git
 $ cd resume
 $ latexmk -pdf -pvc main
