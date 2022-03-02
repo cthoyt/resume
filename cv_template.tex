@@ -1,0 +1,144 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% "ModernCV" CV and Cover Letter
+% LaTeX Template
+% Version 1.11 (19/6/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Xavier Danaux (xdanaux@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Important note:
+% This template requires the moderncv.cls and .sty files to be in the same 
+% directory as this .tex file. These files provide the resume style and themes 
+% used for structuring the document.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+
+\documentclass[11pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+
+
+\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\usepackage[scale=0.8]{geometry} % Reduce document margins
+\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
+\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
+
+\begin{document}
+
+{\Huge Charles Tapley Hoyt, Ph.D.}
+
+    \vspace{3mm}
+
+    \href{https://cthoyt.com}{cthoyt.com}
+    $\cdot$
+    \includegraphics[scale=0.055]{img/LI-In-Bug.png}
+    \href{https://linkedin.com/in/cthoyt}{linkedin.com/in/cthoyt}
+    $\cdot$
+    \includegraphics[scale=0.25]{img/GitHub-Mark-32px.png}
+    \href{https://github.com/cthoyt}{github.com/cthoyt}
+    $\cdot$
+    \includegraphics[scale=0.02]{img/Twitter_Social_Icon_Circle_Color.png}
+    \href{https://twitter.com/cthoyt}{@cthoyt}
+    $\cdot$
+    \includegraphics[scale=0.01]{img/wikidata_logo.png}
+    \href{https://www.wikidata.org/wiki/Q47475003}{Q47475003}
+    \\
+    \includegraphics[scale=0.5]{img/ORCIDiD_icon16x16.png}
+    \href{https://orcid.org/0000-0003-4423-4370}{https://orcid.org/0000-0003-4423-4370}
+
+
+    \section{Interests}\label{sec:interests}
+
+    Systems and Networks Biology, Cheminformatics, Machine Learning, Knowledge Graphs, Network Representation Learning, Proteochemometrics, Target Prioritization, Drug Repositioning, Pathway Analysis
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Work}
+
+    \cventry{2020}{Computational Biologist}{Enveda Therapeutics}{Bonn}{Germany}{}
+
+    \cventry{2018--19}{Lecturer}{University of Bonn}{Bonn}{Germany}{}
+
+    \cventry{2016--19}{Research Fellow}{Fraunhofer SCAI}{Sankt Augustin}{Germany}{}
+
+    \cventry{2012--15}{Teaching Assistant}{Northeastern University}{Boston, MA}{USA}{}
+
+    \cventry{2014}{\textit{in Silico} Lead Discovery Co-op}{Novartis}{Cambridge, MA}{USA}{}
+
+    \cventry{2013--14}{Molecular Informatics Internship}{Pfizer}{Cambridge, MA}{USA}{}
+
+    \cventry{2013}{Post-Selection Chemistry Co-op}{GlaxoSmithKline}{Waltham, MA}{USA}{}
+
+    \cventry{2012}{Research Assistant}{Pollastri Laboratory, Northeastern University}{Boston, MA}{USA}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Education}\label{sec:education}
+
+    \cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{}{University of Bonn, Germany}{}
+
+    \cventry{2015--17}{Master of Science}{Life Science Informatics}{}{University of Bonn, Germany}{}
+
+    \cventry{2011--15}{Bachelor of Science}{Chemistry}{}{Northeastern University, USA}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Affiliations}\label{sec:affiliations}
+
+    \cvitem{2020--}{CoronaWhy}
+    \cvitem{2017--}{OpenBEL Consortium}
+    \cvitem{2016--}{Erasmus Student Network}
+    \cvitem{2011--}{American Chemical Society}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Spoken Languages}\label{sec:spoken-languages}
+
+    \cvitem{}{English (Native)}
+    \cvitem{}{German (Limited working proficiency)}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Programming Languages}\label{sec:programming-languages}
+
+    Python, Bash, Fish, R, Java, SQL, SPARQL, Cypher, Javascript, HTML, CSS, XPath
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Awards}
+    {% for entry in awards %}
+    \cvitem{{$ entry['year'] $}}{{$ entry['name'] $}}
+    {% endfor %}
+
+
+    \section{Research Artifacts}
+
+    \subsection{HELLO}
+    {$ database_table $}
+    \subsection{Databases}
+    \begin{table}
+    {% for entry in databases %}
+    {$ entry['name'] $} && {$ entry['description'] $} \\
+    {% endfor %}
+    \end{table}
+
+
+\end{document}

@@ -3,4 +3,10 @@ main.fdb_latexmk
 main.fls
 main.log
 main.out
+cv.tex
+cv.aux
+cv.fdb_latexmk
+cv.fls
+cv.log
+cv.out
 .DS_Store

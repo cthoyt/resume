@@ -16,3 +16,10 @@ $ git clone https://github.com/cthoyt/resume.git
 $ cd resume
 $ latexmk -pdf -pvc main
 ```
+
+To build my CV as a PDF, run the following:
+
+```shell
+$ python fill_cv.py
+$ latexmk -pdf -pvc cv
+```
