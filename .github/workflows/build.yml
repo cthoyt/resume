@@ -11,8 +11,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
       - uses: xu-cheng/latex-action@v2
         with:
-          root_file: main.tex
-          args: "-pdf -file-line-error -interaction=nonstopmode"
+          args: "-pdf -file-line-error -interaction=nonstopmode main.tex"
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
