@@ -1,0 +1,12 @@
+SELECT
+    ?work ?workLabel ?venue ?venueLabel ?date ?arxiv ?doi ?pubmed ?biorxiv
+WHERE {
+    ?work wdt:P50 wd:@@@ qid @@@ .
+    OPTIONAL { ?work wdt:P1433 ?venue }
+    OPTIONAL { ?work wdt:P577 ?date }
+    OPTIONAL { ?work wdt:P818 ?arxiv . }
+    OPTIONAL { ?work wdt:P356 ?doi . }
+    OPTIONAL { ?work wdt:P698 ?pubmed . }
+    OPTIONAL { ?work wdt:P3951 ?biorxiv . }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,da,de,es,fr,jp,no,ru,sv,zh". }
+}

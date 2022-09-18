@@ -1,0 +1,102 @@
+{% macro list_publications(records, title) -%}
+    {% if records %}
+        \section{@@@ title.title() @@@}\label{sec:@@@ title.lower() @@@}
+        \begin{enumerate}
+        \itemsep0.5em
+        {% for record in records %}
+            \item
+                \wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip() @@@}} {% if record.date %}(@@@ record.date.split("-")[0] @@@){% endif %}.
+                {# \textit{@@@ record.venueLabel @@@}. #}{% if record.pubmed or record.doi or record.arxiv or record.biorxiv %}\\{% endif %}
+                {% if record.pubmed %} \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@record.pubmed @@@}{% endif %}
+                {% if record.doi %} \href{https://bioregistry.io/doi:@@@record.doi @@@}{DOI:@@@record.doi.lower() @@@}}{% endif %}
+                {% if record.arxiv %} \href{https://bioregistry.io/arxiv:@@@record.arxiv @@@}{arXiv:@@@record.arxiv @@@}}{% endif %}
+                {% if record.biorxiv %} \href{https://bioregistry.io/biorxiv:@@@record.biorxiv @@@}{bioRxiv:@@@record.biorxiv @@@}}{% endif %}
+
+        {% endfor %}
+        \end{enumerate}
+    {% endif %}
+{% endmacro %}
+
+\documentclass[11pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+
+\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\usepackage[scale=0.8]{geometry} % Reduce document margins
+\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
+\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
+
+{% raw %}
+\newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
+\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1}{{#2}}}
+{% endraw %}
+
+\begin{document}
+
+{\Huge @@@ name @@@}
+
+\vspace{3mm}
+
+\href{@@@ website @@@}{@@@ website.removeprefix("https://") @@@}
+$\cdot$
+\href{https://linkedin.com/in/@@@ linkedin @@@}{\includegraphics[scale=0.055]{img/LI-In-Bug} linkedin.com/in/@@@ linkedin @@@}
+$\cdot$
+\href{https://github.com/@@@ github @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px} github.com/@@@ github @@@}
+$\cdot$
+\href{https://twitter.com/@@@ twitter @@@}{\includegraphics[scale=0.02]{img/Twitter_Social_Icon_Circle_Color} @ @@@ twitter @@@}
+$\cdot$
+\href{https://bioregistry.io/wikidata:@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo} @@@ qid @@@}
+\\
+\href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16} https://orcid.org/@@@ orcid @@@}
+$\cdot$
+\href{https://scholar.google.com/citations?user=@@@ gscholar @@@}{\includegraphics[scale=0.015625]{img/google_scholar_icon_130918} @@@ gscholar @@@}
+
+\section{Fields of Work}\label{sec:fields}
+
+{% for topic_qid, topic in topics|dictsort %}
+    \href{https://bioregistry.io/wikidata:@@@ topic_qid @@@}{@@@ topic.title() @@@}{% if not loop.last %}, {% endif %}
+{% endfor %}
+
+{% if software %}
+    \section{Software}\label{sec:software}
+    {% for package in software %}
+        \cventry{}{@@@ package.itemLabel @@@}{@@@ package.motto or package.itemDescription @@@}{}{}{\url{@@@
+        package.repo @@@}, \url{@@@ package.website @@@}}
+    {% endfor %}
+{% endif %}
+
+{% if languages %}
+    \section{Spoken Languages}\label{sec:languages}
+
+    {% for language_qid, language in languages|dictsort %}
+        \href{https://bioregistry.io/wikidata:@@@ language_qid @@@}{@@@ language.title() @@@}{% if not loop.last %},
+    {% endif %}
+    {% endfor %}
+{% endif %}
+
+\section{Articles}\label{articles}
+{% for year, papers in papers_dd|dictsort|reverse %}
+    \subsection{@@@year@@@}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for record in papers %}
+        \item
+            \wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip() @@@}}.
+            {# \textit{@@@ record.venueLabel @@@}. #}{% if record.pubmed or record.doi or record.arxiv or record.biorxiv %}\\{% endif %}
+            {% if record.pubmed %} \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@record.pubmed @@@}{% endif %}
+            {% if record.doi %} \href{https://bioregistry.io/doi:@@@record.doi @@@}{DOI:@@@record.doi.lower() @@@}}{% endif %}
+            {% if record.arxiv %} \href{https://bioregistry.io/arxiv:@@@record.arxiv @@@}{arXiv:@@@record.arxiv @@@}}{% endif %}
+            {% if record.biorxiv %} \href{https://bioregistry.io/biorxiv:@@@record.biorxiv @@@}{bioRxiv:@@@record.biorxiv @@@}}{% endif %}
+
+    {% endfor %}
+    \end{enumerate}
+{% endfor %}
+
+@@@ list_publications(reviews, "Reviews") @@@
+
+@@@ list_publications(acknowledgements, "Acknowledgements") @@@
+
+\end{document}

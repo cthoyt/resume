@@ -1,0 +1,7 @@
+SELECT
+    ?topic ?topicLabel
+WHERE
+{
+    wd:@@@ qid @@@ wdt:P101 ?topic .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}

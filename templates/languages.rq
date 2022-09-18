@@ -1,0 +1,7 @@
+SELECT
+    ?language ?languageLabel
+WHERE
+{
+    wd:@@@ qid @@@ wdt:P1412 ?language .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}

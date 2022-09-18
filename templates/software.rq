@@ -1,0 +1,15 @@
+SELECT DISTINCT
+    ?item ?itemLabel ?itemDescription
+    ?licenseLabel
+    ?repo
+    ?website
+    ?motto
+WHERE
+{
+    ?item wdt:P170|wdt:P178|wdt:P767 wd:@@@ qid @@@ .
+    OPTIONAL { ?item wdt:P275 ?license } .
+    OPTIONAL { ?item wdt:P1324 ?repo } .
+    OPTIONAL { ?item wdt:P856 ?website } .
+    OPTIONAL { ?item wdt:P1451 ?motto } .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
