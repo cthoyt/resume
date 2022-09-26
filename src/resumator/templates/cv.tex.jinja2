@@ -1,0 +1,178 @@
+{% macro render_publication(record, show_year=True) %}
+    {% set venue = record.venueShort or record.venueLabel %}
+    {% set year = record.date.split("-")[0] %}
+    \wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}\\
+    \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
+    {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}\\{% endif %}
+    {% if record.pubmed %} {\scriptsize \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@ record.pubmed @@@}}{% endif %}
+    {% if record.pmc %} {\scriptsize \href{https://bioregistry.io/pmc:@@@record.pmc @@@}{@@@ record.pmc @@@}}{% endif %}
+    {% if record.doi %} {\scriptsize \href{https://bioregistry.io/doi:@@@record.doi @@@}{doi:@@@ record.doi.lower() @@@}}}{% endif %}
+    {% if record.arxiv and not (record.pubmed or record.doi) %} {\scriptsize
+        \href{https://bioregistry.io/arxiv:@@@record.arxiv @@@}{arxiv:@@@record.arxiv @@@}}}{% endif %}
+    {% if record.biorxiv and not record.pubmed %} {\scriptsize \href{https://bioregistry.io/biorxiv:@@@ record.biorxiv @@@}{biorxiv:@@@ record.biorxiv @@@}}}{% endif %}
+    {% if record.ceurws and not record.doi %} {\scriptsize \href{@@@ record.url @@@}{ceur-ws:@@@ record.ceurws @@@}}}
+    {% endif %}
+{% endmacro %}
+
+{% macro list_publications(records, title) -%}
+    {% if records %}
+        \section{@@@ title.title() @@@}\label{sec:@@@ title.lower() @@@}
+
+        Note that this section is automatically generated from Wikidata and is not necessarily complete.
+
+        \begin{enumerate}
+        \itemsep0.5em
+        {% for record in records %}
+            \item
+            @@@ render_publication(record) @@@
+        {% endfor %}
+        \end{enumerate}
+    {% endif %}
+{% endmacro %}
+
+{% macro href_orcid(orcid) %}
+    \href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}\ @@@ orcid @@@}
+{% endmacro %}
+
+{% macro render_mentee(mentee) %}
+    @@@ mentee.name @@@ {% if mentee.orcid %}{\scriptsize @@@ href_orcid(mentee.orcid) @@@}{% endif %}
+    \begin{itemize}
+    {% for role in mentee.roles %}
+        \item
+    {\scriptsize @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - @@@ role.end.month @@@ @@@ role.end.year @@@)}
+    {% endfor %}
+    \end{itemize}
+{% endmacro %}
+
+{% macro render_course(course) %}
+    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)\\
+    {\scriptsize @@@ course.location.university @@@}
+{% endmacro %}
+
+\documentclass[11pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+
+\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\usepackage[scale=0.8]{geometry} % Reduce document margins
+\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
+\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
+
+{% raw %}
+\newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
+\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1}{{#2}}}
+{% endraw %}
+
+\begin{document}
+
+{\Huge @@@ name @@@}
+
+\vspace{3mm}
+
+{% if website %}\href{@@@ website @@@}{@@@ website.removeprefix("https://") @@@}
+    $\cdot${% endif %}
+{% if linkedin %}\href{https://linkedin.com/in/@@@ linkedin @@@}{\includegraphics[scale=0.055]{img/LI-In-Bug}\
+    linkedin.com/in/@@@ linkedin @@@}
+    $\cdot${% endif %}
+{% if github %}\href{https://github.com/@@@ github @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px}\
+    github.com/@@@ github @@@}
+    $\cdot${% endif %}
+{% if twitter %}\href{https://twitter.com/@@@ twitter
+    @@@}{\includegraphics[scale=0.02]{img/Twitter_Social_Icon_Circle_Color}\ @@@ twitter @@@}
+    $\cdot${% endif %}
+\href{https://bioregistry.io/wikidata:@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo}\ @@@ qid @@@}
+$\cdot$
+\href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}\ https://orcid.org/@@@ orcid @@@}
+$\cdot$
+{% if website %}\href{https://scholar.google.com/citations?user=@@@ gscholar
+    @@@}{\includegraphics[scale=0.015625]{img/google_scholar_icon_130918} @@@ gscholar @@@}
+{% endif %}
+
+\section{Fields of Work}\label{sec:fields}
+
+{% for topic_qid, topic in topics|dictsort %}
+    \href{https://bioregistry.io/wikidata:@@@ topic_qid @@@}{@@@ topic.title() @@@}{% if not loop.last %}, {% endif %}
+{% endfor %}
+
+{% if languages %}
+    \section{Spoken Languages}\label{sec:languages}
+
+    {% for language_qid, language in languages|dictsort %}
+        \href{https://bioregistry.io/wikidata:@@@ language_qid @@@}{@@@ language.title() @@@}{% if not loop.last %},
+    {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if degrees %}
+    \section{Education}\label{sec:education}
+
+    {% for record in degrees %}
+        \cventry{@@@ record.period @@@}{@@@ record.degreeLabel.title() @@@}{}{}{@@@ record.institutionLabel @@@, @@@
+        record.countryLabel @@@}{}
+    {% endfor %}
+{% endif %}
+
+{% if employers %}
+    \section{Work}\label{sec:work}
+
+    {% for record in employers %}
+        \cventry{@@@ record.period @@@}{@@@ record.positionLabel.title() @@@}{@@@ record.employerLabel @@@}{@@@
+        record.locationLabel @@@}{@@@ record.countryLabel @@@}{}
+    {% endfor %}
+{% endif %}
+
+{\Huge Research Output}
+
+{% if software %}
+    \section{Software}\label{sec:software}
+    {% for package in software %}
+        \cventry{}{@@@ package.itemLabel @@@}{@@@ package.motto or package.itemDescription @@@}{}{}{\url{@@@
+        package.repo @@@}, \url{@@@ package.website @@@}}
+    {% endfor %}
+{% endif %}
+
+{% set co = namespace(counter=0) %}
+{% for year, papers in papers_dd|dictsort|reverse %}
+    \section{Articles @@@ year @@@}\label{articles@@@year@@@}
+    \begin{enumerate}
+    \setcounter{enumi}{@@@ co.counter @@@}
+    \itemsep0.5em
+    {% for record in papers %}
+        \item
+        @@@ render_publication(record, show_year=True) @@@
+    {% endfor %}
+    {% set co.counter = co.counter + (papers|length) %}
+    \end{enumerate}
+{% endfor %}
+
+@@@ list_publications(reviews, "Reviews") @@@
+
+@@@ list_publications(acknowledgements, "Acknowledgements") @@@
+
+{% if mentees %}
+    \section{Mentees}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for mentee in mentees %}
+        \item
+        @@@ render_mentee(mentee) @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+{% if courses %}
+    \section{Courses Taught}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for course in courses %}
+        \item
+        @@@ render_course(course) @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\end{document}
