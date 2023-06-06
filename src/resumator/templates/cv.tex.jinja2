@@ -1,55 +1,6 @@
-{% macro render_publication(record, show_year=True) %}
-    {% set venue = record.venueShort or record.venueLabel %}
-    {% set year = record.date.split("-")[0] %}
-    \wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}\\
-    \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
-    {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}\\{% endif %}
-    {% if record.pubmed %} {\scriptsize \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@ record.pubmed @@@}}{% endif %}
-    {% if record.pmc %} {\scriptsize \href{https://bioregistry.io/pmc:@@@record.pmc @@@}{@@@ record.pmc @@@}}{% endif %}
-    {% if record.doi %} {\scriptsize \href{https://bioregistry.io/doi:@@@record.doi @@@}{doi:@@@ record.doi.lower() @@@}}}{% endif %}
-    {% if record.arxiv and not (record.pubmed or record.doi) %} {\scriptsize
-        \href{https://bioregistry.io/arxiv:@@@record.arxiv @@@}{arxiv:@@@record.arxiv @@@}}}{% endif %}
-    {% if record.biorxiv and not record.pubmed %} {\scriptsize \href{https://bioregistry.io/biorxiv:@@@ record.biorxiv @@@}{biorxiv:@@@ record.biorxiv @@@}}}{% endif %}
-    {% if record.ceurws and not record.doi %} {\scriptsize \href{@@@ record.url @@@}{ceur-ws:@@@ record.ceurws @@@}}}
-    {% endif %}
-{% endmacro %}
+{% import 'cv_macros.jinja2' as utils %}
 
-{% macro list_publications(records, title) -%}
-    {% if records %}
-        \section{@@@ title.title() @@@}\label{sec:@@@ title.lower() @@@}
-
-        Note that this section is automatically generated from Wikidata and is not necessarily complete.
-
-        \begin{enumerate}
-        \itemsep0.5em
-        {% for record in records %}
-            \item
-            @@@ render_publication(record) @@@
-        {% endfor %}
-        \end{enumerate}
-    {% endif %}
-{% endmacro %}
-
-{% macro href_orcid(orcid) %}
-    \href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}\ @@@ orcid @@@}
-{% endmacro %}
-
-{% macro render_mentee(mentee) %}
-    @@@ mentee.name @@@ {% if mentee.orcid %}{\scriptsize @@@ href_orcid(mentee.orcid) @@@}{% endif %}
-    \begin{itemize}
-    {% for role in mentee.roles %}
-        \item
-    {\scriptsize @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - @@@ role.end.month @@@ @@@ role.end.year @@@)}
-    {% endfor %}
-    \end{itemize}
-{% endmacro %}
-
-{% macro render_course(course) %}
-    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)\\
-    {\scriptsize @@@ course.location.university @@@}
-{% endmacro %}
-
-\documentclass[11pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+\documentclass[10pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
 
 \moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
 \moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
@@ -69,7 +20,7 @@
 
 \begin{document}
 
-{\Huge @@@ name @@@}
+{\Huge @@@ name @@@, Ph.D.}
 
 \vspace{3mm}
 
@@ -80,9 +31,6 @@
     $\cdot${% endif %}
 {% if github %}\href{https://github.com/@@@ github @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px}\
     github.com/@@@ github @@@}
-    $\cdot${% endif %}
-{% if twitter %}\href{https://twitter.com/@@@ twitter
-    @@@}{\includegraphics[scale=0.02]{img/Twitter_Social_Icon_Circle_Color}\ @@@ twitter @@@}
     $\cdot${% endif %}
 \href{https://bioregistry.io/wikidata:@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo}\ @@@ qid @@@}
 $\cdot$
@@ -117,7 +65,7 @@ $\cdot$
 {% endif %}
 
 {% if employers %}
-    \section{Work}\label{sec:work}
+    \section{Employment}\label{sec:employment}
 
     {% for record in employers %}
         \cventry{@@@ record.period @@@}{@@@ record.positionLabel.title() @@@}{@@@ record.employerLabel @@@}{@@@
@@ -125,52 +73,152 @@ $\cdot$
     {% endfor %}
 {% endif %}
 
-{\Huge Research Output}
+\section{Awards}
+\cventry{2023}{Nominated, Excellence in Biocuration Early Career Award}{}{}{}{}
+\cventry{2015}{Bernie Lemire Award}{}{}{}{}
+\cventry{2011}{Presidential Scholarship}{}{}{}{}
 
-{% if software %}
-    \section{Software}\label{sec:software}
-    {% for package in software %}
-        \cventry{}{@@@ package.itemLabel @@@}{@@@ package.motto or package.itemDescription @@@}{}{}{\url{@@@
-        package.repo @@@}, \url{@@@ package.website @@@}}
-    {% endfor %}
-{% endif %}
+\hfill \break
+
+{\huge Research}
 
 {% set co = namespace(counter=0) %}
+\section{Publications}
 {% for year, papers in papers_dd|dictsort|reverse %}
-    \section{Articles @@@ year @@@}\label{articles@@@year@@@}
     \begin{enumerate}
     \setcounter{enumi}{@@@ co.counter @@@}
     \itemsep0.5em
     {% for record in papers %}
         \item
-        @@@ render_publication(record, show_year=True) @@@
+        @@@ utils.render_publication(record, show_year=True) @@@
     {% endfor %}
     {% set co.counter = co.counter + (papers|length) %}
     \end{enumerate}
 {% endfor %}
 
-@@@ list_publications(reviews, "Reviews") @@@
+\section{Invited Presentations}
+\begin{enumerate}
+{% for presentation in presentations %}
+    {% if presentation.invited %}
+        \item @@@ presentation.venue @@@ (@@@ presentation.date.month @@@ @@@ presentation.date.day @@@, @@@
+        presentation.date.year @@@)
+    {% endif %}
+{% endfor %}
+\end{enumerate}
 
-@@@ list_publications(acknowledgements, "Acknowledgements") @@@
+\section{Conference Oral Presentations}
 
-{% if mentees %}
-    \section{Mentees}
+TODO
+
+\section{Conference Poster Presentations}
+
+TODO
+
+{% if software %}
+    \section{Software}\label{sec:software}
     \begin{enumerate}
-    \itemsep0.5em
-    {% for mentee in mentees %}
-        \item
-        @@@ render_mentee(mentee) @@@
+    {% for package in software %}
+        \item @@@ utils.render_software(package) @@@
     {% endfor %}
     \end{enumerate}
 {% endif %}
+
+{% if databases %}
+    \section{Databases}\label{sec:databases}
+    \begin{enumerate}
+    {% for database in databases %}
+        \item @@@ database.itemLabel @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+{% if databases_contributions %}
+    \subsection{External Contributions}\label{sec:contributions}
+    {% for database in databases_contributions %}
+        \href{https://bioregistry.io/wikidata:@@@ database.item @@@}{@@@ database.abbreviation or database.itemLabel @@@}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if reviews %}
+    @@@ list_publications(reviews, "Reviews") @@@
+{% endif %}
+
+{% if acknowledgements %}
+    @@@ list_publications(acknowledgements, "Acknowledgements") @@@
+{% endif %}
+
+{% if fundings %}
+\section{Funding}
+    \begin{enumerate}
+    {% for funding in fundings %}
+    \item @@@ funding.name @@@ (@@@ funding.award @@@). Role: @@@ funding.role @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\hfill \break
+{\huge Community}
+
+{% if organizations %}
+    \section{Professional Affiliations}
+    \begin{itemize}
+    {% for organization in organizations %}
+        \item @@@ utils.render_organization(organization) @@@
+    {% endfor %}
+    \end{itemize}
+{% endif %}
+
+{% if events %}
+    \section{Events Attended}
+    \begin{enumerate}
+    {% for event in events %}
+        \item @@@ utils.render_event(event) @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\section{Service to the Community}
+
+\subsection{Scholarly Journals}
+
+\begin{enumerate}
+\item Scientific article reviewer in:
+\begin{itemize}
+{% for n in reviewers.journals %}
+    \item @@@ n @@@
+{% endfor %}
+\end{itemize}
+\item Reproducibility Editor, Journal of Cheminformatics (pending)
+\end{enumerate}
+
+{% if conference_committees %}
+    \subsection{Conference Organizing Committees}
+    \begin{enumerate}
+    {% for record in conference_committees %}
+        \item \href{@@@ record.url @@@}{@@@ record.name @@@} (@@@ record.role @@@)
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\hfill \break
+{\huge Teaching}
 
 {% if courses %}
     \section{Courses Taught}
     \begin{enumerate}
     \itemsep0.5em
     {% for course in courses %}
-        \item
-        @@@ render_course(course) @@@
+        \item @@@ utils.render_course(course) @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+{% if mentees %}
+    \section{Supervision}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for mentee in mentees %}
+        \item @@@ utils.render_mentee(mentee) @@@
     {% endfor %}
     \end{enumerate}
 {% endif %}

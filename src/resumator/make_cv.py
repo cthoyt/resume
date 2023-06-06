@@ -1,7 +1,7 @@
 """
-
 TODO see http://eosrei.net/articles/2015/11/latex-templates-python-and-jinja2-generate-pdfs
-
+TODO conferences
+TODO professional affiliations
 """
 
 import json
@@ -9,8 +9,10 @@ import re
 from collections import defaultdict
 from functools import lru_cache
 from pathlib import Path
+from operator import itemgetter
 from typing import Optional, Sequence, Literal
 
+import click
 import pystow
 import requests
 import yaml
@@ -41,8 +43,9 @@ WIKIDATA_ENDPOINT = "https://query.wikidata.org/bigdata/namespace/wdq/sparql"
 WIKIBASE_LINE = """SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }"""
 
 CHARLIE = "Q47475003"
-CEURWS_RE = re.compile("^http://ceur-ws\.org/Vol-(\\d+)/paper-?(\\d+)")
-QID_RE = re.compile("^Q\\d+$")
+CEURWS_RE = re.compile(r"^https?://ceur-ws\.org/Vol-(\d+)/paper-?(\d+)")
+QID_RE = re.compile(r"^Q\d+$")
+PREPRINT_NAMES = {"chemrxiv", "arxiv", "biorxiv", "medxriv"}
 
 
 class Date(BaseModel):
@@ -92,6 +95,7 @@ class CourseLocation(BaseModel):
     university: str
     department: str
 
+
 class Course(BaseModel):
     name: str
     level: Literal["Bachelor's Degree", "Master's course"]
@@ -100,15 +104,15 @@ class Course(BaseModel):
     start: Optional[Date] = None
     end: Optional[Date] = None
     period: Period
-    location:CourseLocation
-    description: Optional[str]=None
+    location: CourseLocation
+    description: Optional[str] = None
     role: Literal["Guest Lecturer", "Instructor", "Teaching Assistant"]
     code: Optional[str] = None
 
 
-def render_query(template: str, qid: str):
-    path = MODULE.join(qid, name=f"{template}.txt")
-    if path.is_file():
+def render_query(template: str, qid: str, *, refresh: bool):
+    path = MODULE.join(qid, name=f"{template}.json")
+    if path.is_file() and not refresh:
         return json.loads(path.read_text())
 
     sparql = render(f"{template}.rq", qid=qid)
@@ -128,35 +132,35 @@ def _get_template(name: str) -> Template:
     return environment.get_template(name)
 
 
-def get_attributes(qid: str) -> dict[str, str]:
+def get_attributes(qid: str, *, refresh: bool) -> dict[str, str]:
     """Get attributes."""
-    res = render_query("attrs", qid=qid)[0]
+    res = render_query("attrs", qid=qid, refresh=refresh)[0]
     res["nationality"] = res["nationalityLabel"]
     res["name"] = res["personLabel"]
     return res
 
 
-def get_topics(qid: str) -> dict[str, str]:
+def get_topics(qid: str, *, refresh: bool) -> dict[str, str]:
     """Get topics of research."""
-    q = render_query("topics", qid=qid)
+    q = render_query("topics", qid=qid, refresh=refresh)
     return _undict(q, "topic", "topicLabel")
 
 
-def get_languages(qid: str) -> dict[str, str]:
+def get_languages(qid: str, *, refresh: bool) -> dict[str, str]:
     """Get languages spoken/written."""
-    q = render_query("languages", qid=qid)
+    q = render_query("languages", qid=qid, refresh=refresh)
     return _undict(q, "language", "languageLabel")
 
 
-def get_employers(qid: str):
-    records = render_query("employers", qid=qid)
+def get_employers(qid: str, *, refresh: bool):
+    records = render_query("employers", qid=qid, refresh=refresh)
     for record in records:
         _add_period(record)
     return records
 
 
-def get_education(qid: str):
-    records = render_query("education", qid=qid)
+def get_education(qid: str, *, refresh: bool):
+    records = render_query("education", qid=qid, refresh=refresh)
     for record in records:
         _add_period(record)
     return records
@@ -178,27 +182,43 @@ def _add_period(record):
     record["period"] = text
 
 
-def get_software(qid: str):
+def get_software(qid: str, *, refresh: bool):
     """Get software."""
-    return render_query("software", qid=qid)
+    return render_query("software", qid=qid, refresh=refresh)
 
 
-def get_reviews(qid: str):
+def get_databases(qid: str, *, refresh: bool):
+    """Get databases."""
+    return render_query("databases", qid=qid, refresh=refresh)
+
+
+def get_databases_contributions(qid: str, *, refresh: bool):
+    """Get contributions to databases."""
+    return render_query("database_contributions", qid=qid, refresh=refresh)
+
+
+def get_reviews(qid: str, *, refresh: bool):
     """Get reviews."""
-    r = render_query("reviews", qid=qid)
+    r = render_query("reviews", qid=qid, refresh=refresh)
     return _process_papers(r)
 
 
-def get_acknowledgements(qid: str):
+def get_acknowledgements(qid: str, *, refresh: bool):
     """Get acknowledgements."""
-    r = render_query("acknowledgements", qid=qid)
+    r = render_query("acknowledgements", qid=qid, refresh=refresh)
     return _process_papers(r)
 
 
-def get_papers(qid: str):
+def get_papers(qid: str, *, refresh: bool):
     """Get papers."""
-    r = render_query("works", qid=qid)
+    r = render_query("works", qid=qid, refresh=refresh)
     return _process_papers(r)
+
+
+def get_events(qid: str, *, refresh: bool):
+    """Get papers."""
+    r = render_query("events", qid=qid, refresh=refresh)
+    return r
 
 
 def _undict(records: list[dict[str, str]], k: str, v: str) -> dict[str, str]:
@@ -230,23 +250,26 @@ def _process_papers(
         ]
     if remove_figshare:
         papers = [
-            paper for paper in papers if "figshare." not in paper.get("doi", "").lower()
+            paper
+            for paper in papers
+            if "figshare." not in paper.get("doi", "").lower() and "figshare.com" not in paper.get("url", "").lower()
         ]
     for paper in papers:
         _clean_pmc(paper)
         _clean_ceurs(paper)
     papers = _deduplicate(papers)
-    return sorted(papers, key=lambda s: s["date"], reverse=True)
+    return sorted(papers, key=itemgetter("date"), reverse=True)
 
 
 def _clean_pmc(paper: dict[str, any]) -> None:
-    pmc = paper.get("pmc")
+    pmc = paper.get("pmc", "").strip()
     if pmc:
+        pmc = pmc.lower().removeprefix("pmc")
         paper["pmc"] = f"PMC{pmc}"
 
 
 def _clean_ceurs(paper: dict[str, any]) -> None:
-    url = paper.get("url")
+    url = paper.get("url", "").strip()
     if url:
         match = CEURWS_RE.match(url)
         if match:
@@ -257,7 +280,7 @@ def _clean_ceurs(paper: dict[str, any]) -> None:
 def _deduplicate(papers: Sequence[dict[str, any]]) -> Sequence[dict[str, any]]:
     title_to_papers = defaultdict(list)
     for paper in papers:
-        title = paper["workLabel"].rstrip().rstrip(":").rstrip(".").lower()
+        title = paper["workLabel"].rstrip().rstrip(":").rstrip(".").lower().replace("-", "").replace(" ", "").replace(",", "")
         title_to_papers[title].append(paper)
     return [_get_best(group) for group in title_to_papers.values()]
 
@@ -290,9 +313,9 @@ def _get_best(papers: Sequence[dict[str, any]]) -> dict[str, any]:
     elif "arxiv" in papers[1] and "doi" in papers[0]:
         return papers[0]
 
-    if papers[0].get("venueLabel", "").lower() in {"chemrxiv", "arxiv", "biorxiv"}:
+    if papers[0].get("venueLabel", "").lower() in PREPRINT_NAMES:
         return papers[1]
-    if papers[1].get("venueLabel", "").lower() in {"chemrxiv", "arxiv", "biorxiv"}:
+    if papers[1].get("venueLabel", "").lower() in PREPRINT_NAMES:
         return papers[0]
 
     return max(papers, key=lambda paper: paper.get("date", ""))
@@ -323,20 +346,25 @@ def query_wikidata_raw(sparql: str) -> list[dict[str, any]]:
     return res_json["results"]["bindings"]
 
 
-def main(qid: str = CHARLIE):
+@click.command()
+@click.option("--qid", default=CHARLIE)
+@click.option("--refresh", is_flag=True)
+def main(qid: str, refresh: bool):
     if not QID_RE.fullmatch(qid):
         raise ValueError(f"Invalid wikidata identifier: {qid}")
-    data = get_attributes(qid)
-    topics = get_topics(qid)
-    software = get_software(qid)
-    languages = get_languages(qid)
-    reviews = get_reviews(qid)
-    acknowledgements = get_acknowledgements(qid)
-    employers = get_employers(qid)
-    degrees = get_education(qid)
+    data = get_attributes(qid, refresh=refresh)
+    topics = get_topics(qid, refresh=refresh)
+    software = get_software(qid, refresh=refresh)
+    databases = get_databases(qid, refresh=refresh)
+    databases_contributions = get_databases_contributions(qid, refresh=refresh)
+    languages = get_languages(qid, refresh=refresh)
+    reviews = get_reviews(qid, refresh=refresh)
+    acknowledgements = get_acknowledgements(qid, refresh=refresh)
+    employers = get_employers(qid, refresh=refresh)
+    degrees = get_education(qid, refresh=refresh)
 
     papers_dd = defaultdict(list)
-    papers = get_papers(qid)
+    papers = get_papers(qid, refresh=refresh)
     for paper in papers:
         papers_dd[paper.get("date", "").split("-")[0]].append(paper)
 
@@ -364,18 +392,34 @@ def main(qid: str = CHARLIE):
         else:
             courses.append(c)
 
+    events = get_events(qid, refresh=refresh)
+
+    presentations = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/presentations.yml"))
+    conference_committees = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/service.yml"))
+    reviewers = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/reviewer.yml"))
+    organizations = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/organizations.yml"))
+    fundings = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/funding.yml"))
+
     tex = CV_TEMPLATE.render(
         qid=qid,
         topics=topics,
         software=software,
-        languages=languages,
-        reviews=reviews,
-        acknowledgements=acknowledgements,
+        presentations=presentations,
+        databases=databases,
+        databases_contributions=databases_contributions,
+        conference_committees=conference_committees,
+        reviewers=reviewers,
+        fundings=fundings,
+        organizations=organizations,
+        # languages=languages,
+        # reviews=reviews,
+        # acknowledgements=acknowledgements,
         papers_dd=papers_dd,
         employers=employers,
         degrees=degrees,
         mentees=mentees,
         courses=courses,
+        events=events,
         **data,
     )
     output.write_text(tex)
