@@ -354,6 +354,11 @@ def main(qid: str, refresh: bool):
     reviews = get_reviews(qid, refresh=refresh)
     acknowledgements = get_acknowledgements(qid, refresh=refresh)
     employers = get_employers(qid, refresh=refresh)
+    remotes = {"Q49121", "Q94505592"}
+    for e in employers:
+        if e["employer"] in remotes:
+            e["remote"] = True
+
     degrees = get_education(qid, refresh=refresh)
 
     papers_dd = defaultdict(list)

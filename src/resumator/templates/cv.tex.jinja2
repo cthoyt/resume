@@ -56,37 +56,42 @@ $\cdot$
 {% endif %}
 
 \section{Education}\label{sec:education}
-\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
-\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
-\cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.95/4.0 (Summa Cum Laude)}
+\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Research Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
+\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Research Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
+\cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.95/4.0 (Summa Cum Laude)\\Research Advisor: Prof. Dr. Michael P. Pollastri}
 
-{% if employers %}
-    \section{Employment}\label{sec:employment}
+\section{Employment}\label{sec:employment}
 
-    {% for record in employers %}
-        \cventry{@@@ record.period @@@}{@@@ record.positionLabel.title() @@@}{@@@ record.employerLabel @@@}{@@@
-        record.locationLabel @@@}{@@@ record.countryLabel @@@}{}
-    {% endfor %}
-{% endif %}
+\cventry{2021--}{Research Fellow}{Harvard Medical School, Laboratory of Systems Pharmacology}{Boston, MA}{USA (remote)}{Biocuration, data standardization, natural language processing, data integration, and automated assembly of knowledge and models}
+\cventry{2020}{Computational Biologist}{Enveda Biosciences}{Boulder, CO}{USA (remote)}{Biomedical data integration, knowledge graph construction, and analysis}
+\cventry{2018--19}{Lecturer}{University of Bonn}{Bonn}{Germany}{}
+\cventry{2016--19}{Research Fellow}{Fraunhofer SCAI, Dept. of Bioinformatics}{Sankt Augustin}{Germany}{Systems biology modeling and analysis with the Biological Expression Language}
+\cventry{2012--15}{Teaching Assistant}{Northeastern University}{Boston, MA}{USA}{}
+\cventry{2014}{\textit{in Silico} Lead Discovery Co-op}{Novartis}{Cambridge, MA}{USA}{Mechanism of action deconvolution in high-throughput black-box phenotypic screens}
+\cventry{2013--14}{Molecular Informatics Internship}{Pfizer}{Cambridge, MA}{USA}{Software development and database development for cancer genomics data}
+\cventry{2013}{Post-Selection Chemistry Co-op}{GlaxoSmithKline}{Waltham, MA}{USA}{Lead optimization of antivirals identified by ultra-high-throughput screening}
+\cventry{2012}{Research Assistant}{Pollastri Laboratory, Northeastern University}{Boston, MA}{USA}{Medicinal synthetic chemistry for repurposing PDE4 inhibitors against \textit{T. Brucei}}
 
 \section{Awards}
 \cventry{2023}{Nominated, Excellence in Biocuration Early Career Award}{International Society of Biocuration}{}{}{}
 \cventry{2015}{Bernie Lemire Award}{Department of Chemistry, Northeastern University}{}{}{}
 \cventry{2011}{Presidential Scholarship}{Northeastern University}{}{}{}
 
-\hfill \break
+\newpage
 
 {\huge Research}
 
 {% set co = namespace(counter=0) %}
 \section{Publications}
 
+Author lists have been omitted to reduce visual clutter. The following are noted:
+
 \begin{itemize}
 \item $\dagger$ signifies first or co-first authorship
 \item $\ddagger$ signifies last or senior authorship
 \end{itemize}
 
-\vspace{0.5}
+\vspace{0.5cm}
 
 {% for year, papers in papers_dd|dictsort|reverse %}
     \begin{enumerate}
@@ -119,7 +124,7 @@ $\cdot$
 {% if software %}
     \section{Research Software}\label{sec:software}
     \begin{enumerate}
-    \itemsep0.75em
+    \itemsep0.5em
     {% for package in software %}
         {% if not package.skipcv %}
         \item @@@ utils.render_software(package) @@@
@@ -131,7 +136,7 @@ $\cdot$
 {% if databases %}
     \section{Databases}\label{sec:databases}
     \begin{enumerate}
-    \itemsep0.75em
+    \itemsep0.5em
     {% for database in databases %}
         \item @@@ utils.render_database(database) @@@
     {% endfor %}

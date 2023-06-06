@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro render_organization(organization) %}
-    \href{https://bioregistry.io/wikidata:@@@ organization.wikidata @@@}{@@@ organization.name @@@} (@@@ organization.start.year @@@ -{% if organization.end %}@@@ organization.start.year @@@{% endif %})
+    \href{https://bioregistry.io/wikidata:@@@ organization.wikidata @@@}{@@@ organization.name @@@} (@@@ organization.start.year @@@ -{% if organization.end %} @@@ organization.end.year @@@{% endif %})
 {% endmacro %}
 
 {% macro render_software(package) %}
