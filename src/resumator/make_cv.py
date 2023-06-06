@@ -275,7 +275,7 @@ def _clean_ceurs(paper: dict[str, any]) -> None:
 def _deduplicate(papers: Sequence[dict[str, any]]) -> Sequence[dict[str, any]]:
     title_to_papers = defaultdict(list)
     for paper in papers:
-        title = paper["workLabel"].rstrip().rstrip(":").rstrip(".").lower().replace("-", "").replace(" ", "").replace(",", "")
+        title = paper["workLabel"].rstrip().rstrip(":").rstrip(".").lower().replace("-", "").replace(" ", "").replace(",", "").replace("z", "s")
         title_to_papers[title].append(paper)
     return [_get_best(group) for group in title_to_papers.values()]
 
@@ -358,7 +358,31 @@ def main(qid: str, refresh: bool):
 
     papers_dd = defaultdict(list)
     papers = get_papers(qid, refresh=refresh)
+    firsts = {
+        "Q118774152",
+        "Q115317009",
+        "Q111337218",
+        "Q109583780",
+        "Q96909013"
+        "Q63709723",
+        "Q96909013",
+        "Q61473695",
+        "Q64911025",
+        "Q60302045",
+        "Q55315340",
+        "Q42695788",
+        "Q63709723",
+    }
+    seniors = {
+        "Q118774035",
+    }
     for paper in papers:
+        if paper["work"] == "Q107296731":
+            continue  # look for my future blog post on what I consider borderline misconduct from Jochen Garke on this
+        if paper["work"] in firsts:
+            paper["first"] = True
+        if paper["work"] in seniors:
+            paper["senior"] = True
         papers_dd[paper.get("date", "").split("-")[0]].append(paper)
 
     ctdata = Path.home().joinpath("dev", "cthoyt.github.io", "_data")

@@ -2,7 +2,7 @@
     {% set venue = record.venueShort or record.venueLabel %}
     {% set year = record.date.split("-")[0] %}
     {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" %}(preprint) {% endif %}
-    \wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
+    {% if record.first %}$\dagger${% endif %}{% if record.senior %}$\ddagger${% endif %}\wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
     \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
     {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}. {% endif %}
     {% if record.pubmed and not record.doi %} {\scriptsize \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@ record.pubmed @@@}}{% endif %}
@@ -38,7 +38,7 @@
     @@@ mentee.name @@@ {% if mentee.orcid %}{\scriptsize @@@ href_orcid(mentee.orcid) @@@}{% endif %}
     {% for role in mentee.roles %}
     {% if role.location.organization.name == role_name %}
-    @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - @@@ role.end.month @@@ @@@ role.end.year @@@)
+    @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - {% if role.end %}@@@ role.end.month @@@ @@@ role.end.year @@@{% endif %})
     {% endif %}
     {% endfor %}
 {% endmacro %}

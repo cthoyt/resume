@@ -56,8 +56,8 @@ $\cdot$
 {% endif %}
 
 \section{Education}\label{sec:education}
-\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \xref{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
-\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \xref{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
+\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
+\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
 \cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.95/4.0 (Summa Cum Laude)}
 
 {% if employers %}
@@ -80,6 +80,14 @@ $\cdot$
 
 {% set co = namespace(counter=0) %}
 \section{Publications}
+
+\begin{itemize}
+\item $\dagger$ signifies first or co-first authorship
+\item $\ddagger$ signifies last or senior authorship
+\end{itemize}
+
+\vspace{0.5}
+
 {% for year, papers in papers_dd|dictsort|reverse %}
     \begin{enumerate}
     \setcounter{enumi}{@@@ co.counter @@@}
@@ -148,9 +156,11 @@ $\cdot$
 {% if fundings %}
 \section{Funding}
     \begin{enumerate}
-    \itemsep0.5em
+    \itemsep0.75em
     {% for funding in fundings %}
-    \item @@@ funding.name @@@ (@@@ funding.award @@@). Role: @@@ funding.role @@@
+    \item {% if not funding.current %}(past){% endif %} \textbf{@@@ funding.name @@@}\\
+        @@@ funding.funder @@@{% if funding.award %}, (@@@ funding.award @@@){% endif %}, @@@ funding.money @@@\\
+        Role: @@@ funding.role @@@
     {% endfor %}
     \end{enumerate}
 {% endif %}
