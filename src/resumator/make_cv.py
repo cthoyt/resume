@@ -182,11 +182,6 @@ def _add_period(record):
     record["period"] = text
 
 
-def get_software(qid: str, *, refresh: bool):
-    """Get software."""
-    return render_query("software", qid=qid, refresh=refresh)
-
-
 def get_databases(qid: str, *, refresh: bool):
     """Get databases."""
     return render_query("databases", qid=qid, refresh=refresh)
@@ -354,8 +349,6 @@ def main(qid: str, refresh: bool):
         raise ValueError(f"Invalid wikidata identifier: {qid}")
     data = get_attributes(qid, refresh=refresh)
     topics = get_topics(qid, refresh=refresh)
-    software = get_software(qid, refresh=refresh)
-    databases = get_databases(qid, refresh=refresh)
     databases_contributions = get_databases_contributions(qid, refresh=refresh)
     languages = get_languages(qid, refresh=refresh)
     reviews = get_reviews(qid, refresh=refresh)
@@ -371,8 +364,9 @@ def main(qid: str, refresh: bool):
     ctdata = Path.home().joinpath("dev", "cthoyt.github.io", "_data")
     mentees_path = ctdata.joinpath("mentees.yml")
     courses_path = ctdata.joinpath("courses.yml")
+    software_path = ctdata.joinpath("software.yml")
 
-    mentees = []
+    mentees = defaultdict(list)
     for mentee in yaml.safe_load(mentees_path.read_text()):
         try:
             m = Mentee.parse_obj(mentee)
@@ -380,9 +374,10 @@ def main(qid: str, refresh: bool):
             print(mentee["name"])
             print(e)
         else:
-            mentees.append(m)
+            for role in m.roles:
+                mentees[role.location.organization.name].append(m)
 
-    courses = []
+    courses = defaultdict(list)
     for course in yaml.safe_load(courses_path.read_text()):
         try:
             c = Course.parse_obj(course)
@@ -390,21 +385,49 @@ def main(qid: str, refresh: bool):
             print(course["name"])
             print(e)
         else:
-            courses.append(c)
+            courses[c.location.university].append(c)
 
     events = get_events(qid, refresh=refresh)
 
-    presentations = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/presentations.yml"))
     conference_committees = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/service.yml"))
     reviewers = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/reviewer.yml"))
     organizations = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/organizations.yml"))
     fundings = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/funding.yml"))
+    databases = yaml.safe_load(ctdata.joinpath("databases.yml").read_text())
+
+    software = yaml.safe_load(software_path.read_text())
+    # for record in software:
+    #     core = any(
+    #         role in {"creator", "advisor"}
+    #         for role in record["roles"]
+    #     )
+
+    invited = []
+    submitted = []
+    for event in yaml.safe_load(ctdata.joinpath("events.yml").read_text()):
+        for key, flag in [("talk", False), ("poster", True)]:
+            if (talk := event.get(key)) is not None:
+                record = {
+                    **talk,
+                    "venue": event["name"],
+                    "poster": flag,
+                }
+                if "date" not in talk:
+                    if "date" in event:
+                        record["date"] = event["date"]
+                    else:
+                        record["date"] = event["end"]  # just assume last day
+                if talk.get("invited"):
+                    invited.append(record)
+                else:
+                    submitted.append(record)
 
     tex = CV_TEMPLATE.render(
         qid=qid,
         topics=topics,
         software=software,
-        presentations=presentations,
+        invited=invited,
+        submitted=submitted,
         databases=databases,
         databases_contributions=databases_contributions,
         conference_committees=conference_committees,

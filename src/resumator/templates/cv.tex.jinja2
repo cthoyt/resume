@@ -15,7 +15,7 @@
 
 {% raw %}
 \newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
-\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1}{{#2}}}
+\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1?provider=scholia}{{#2}}}
 {% endraw %}
 
 \begin{document}
@@ -43,14 +43,14 @@ $\cdot$
 \section{Fields of Work}\label{sec:fields}
 
 {% for topic_qid, topic in topics|dictsort %}
-    \href{https://bioregistry.io/wikidata:@@@ topic_qid @@@}{@@@ topic.title() @@@}{% if not loop.last %}, {% endif %}
+    \wikidata{@@@ topic_qid @@@}{@@@ topic.title() @@@}{% if not loop.last %}, {% endif %}
 {% endfor %}
 
 {% if languages %}
     \section{Spoken Languages}\label{sec:languages}
 
     {% for language_qid, language in languages|dictsort %}
-        \href{https://bioregistry.io/wikidata:@@@ language_qid @@@}{@@@ language.title() @@@}{% if not loop.last %},
+        \wikidata{@@@ language_qid @@@}{@@@ language.title() @@@}{% if not loop.last %},
     {% endif %}
     {% endfor %}
 {% endif %}
@@ -98,27 +98,28 @@ $\cdot$
 
 \section{Invited Presentations}
 \begin{enumerate}
-{% for presentation in presentations %}
-    {% if presentation.invited %}
-        \item @@@ presentation.venue @@@ (@@@ presentation.date.month @@@ @@@ presentation.date.day @@@, @@@
-        presentation.date.year @@@)
-    {% endif %}
+\itemsep0.75em
+{% for record in invited %}
+    \item @@@ utils.render_talk(record) @@@
 {% endfor %}
 \end{enumerate}
 
-\section{Conference Oral Presentations}
-
-TODO
-
-\section{Conference Poster Presentations}
-
-TODO
+\section{Talks and Posters}
+\begin{enumerate}
+\itemsep0.75em
+{% for record in submitted %}
+    \item @@@ utils.render_talk(record) @@@
+{% endfor %}
+\end{enumerate}
 
 {% if software %}
-    \section{Software}\label{sec:software}
+    \section{Research Software}\label{sec:software}
     \begin{enumerate}
+    \itemsep0.75em
     {% for package in software %}
+        {% if not package.skipcv %}
         \item @@@ utils.render_software(package) @@@
+        {% endif %}
     {% endfor %}
     \end{enumerate}
 {% endif %}
@@ -126,8 +127,9 @@ TODO
 {% if databases %}
     \section{Databases}\label{sec:databases}
     \begin{enumerate}
+    \itemsep0.75em
     {% for database in databases %}
-        \item @@@ database.itemLabel @@@
+        \item @@@ utils.render_database(database) @@@
     {% endfor %}
     \end{enumerate}
 {% endif %}
@@ -135,7 +137,7 @@ TODO
 {% if databases_contributions %}
     \subsection{External Contributions}\label{sec:contributions}
     {% for database in databases_contributions %}
-        \href{https://bioregistry.io/wikidata:@@@ database.item @@@}{@@@ database.abbreviation or database.itemLabel @@@}{% if not loop.last %},{% endif %}
+        \wikidata{@@@ database.item @@@}{@@@ (database.abbreviation or database.itemLabel).upper() @@@}{% if not loop.last %},{% endif %}
     {% endfor %}
 {% endif %}
 
@@ -150,6 +152,7 @@ TODO
 {% if fundings %}
 \section{Funding}
     \begin{enumerate}
+    \itemsep0.5em
     {% for funding in fundings %}
     \item @@@ funding.name @@@ (@@@ funding.award @@@). Role: @@@ funding.role @@@
     {% endfor %}
@@ -205,22 +208,26 @@ TODO
 
 {% if courses %}
     \section{Courses Taught}
-    \begin{enumerate}
-    \itemsep0.5em
-    {% for course in courses %}
+    {% for location, sub_courses in courses.items() %}
+        \subsection{@@@ location @@@}
+        \begin{enumerate}
+        {% for course in sub_courses %}
         \item @@@ utils.render_course(course) @@@
+        {% endfor %}
+        \end{enumerate}
     {% endfor %}
-    \end{enumerate}
 {% endif %}
 
 {% if mentees %}
     \section{Supervision}
-    \begin{enumerate}
-    \itemsep0.5em
-    {% for mentee in mentees %}
-        \item @@@ utils.render_mentee(mentee) @@@
+    {% for location, sub_mentees in mentees.items() %}
+    \subsection{@@@ location @@@}
+        \begin{itemize}
+        {% for mentee in sub_mentees %}
+        \item @@@ utils.render_mentee(mentee, location) @@@
+        {% endfor %}
+        \end{itemize}
     {% endfor %}
-    \end{enumerate}
 {% endif %}
 
 \end{document}

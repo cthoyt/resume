@@ -33,18 +33,17 @@
     \href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}}
 {% endmacro %}
 
-{% macro render_mentee(mentee) %}
+{% macro render_mentee(mentee, role_name) %}
     @@@ mentee.name @@@ {% if mentee.orcid %}{\scriptsize @@@ href_orcid(mentee.orcid) @@@}{% endif %}
-    \begin{itemize}
     {% for role in mentee.roles %}
-        \item {\scriptsize @@@ role.name @@@ at @@@ role.location.organization.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - @@@ role.end.month @@@ @@@ role.end.year @@@)}
+    {% if role.location.organization.name == role_name %}
+    @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - @@@ role.end.month @@@ @@@ role.end.year @@@)
+    {% endif %}
     {% endfor %}
-    \end{itemize}
 {% endmacro %}
 
 {% macro render_course(course) %}
-    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)\\
-    {\scriptsize @@@ course.location.university @@@}
+    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)
 {% endmacro %}
 
 {% macro render_event(event) %}
@@ -56,5 +55,19 @@
 {% endmacro %}
 
 {% macro render_software(package) %}
-\textbf{@@@ package.itemLabel.replace("&", "and") @@@} @@@ (package.motto or package.itemDescription).rstrip(".") @@@}.\url{@@@ package.repo or package.website @@@}
+\textbf{@@@ package.name @@@}\hfill@@@ github_link(package.github) @@@\\
+    @@@ (package.description).rstrip(".") @@@
+{% endmacro %}
+
+{% macro render_database(record) %}
+\textbf{@@@ record.name @@@}\hfill{% if record.github %}@@@ github_link(record.github) @@@{% endif %}{% if record.url %}, \url{@@@ record.url @@@}{% endif %}\\
+    @@@ (record.description).rstrip(".") @@@
+{% endmacro %}
+
+{% macro github_link(repo) %}
+\href{https://github.com/@@@ repo.replace("_", "\\_") @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px} @@@ repo.replace("_", "\\_") @@@}
+{% endmacro %}
+
+{% macro render_talk(record) %}
+\href{@@@ record.url @@@}{@@@ record.name @@@}. \textit{@@@ record.venue @@@} (@@@ record.date.month @@@ @@@ record.date.day @@@, @@@record.date.year @@@{% if record.poster %}; poster{% endif %})
 {% endmacro %}
