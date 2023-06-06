@@ -1,0 +1,235 @@
+{% import 'cv_macros.jinja2' as utils %}
+
+\documentclass[10pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+
+\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\usepackage[scale=0.8]{geometry} % Reduce document margins
+\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
+\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
+
+{% raw %}
+\newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
+\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1?provider=scholia}{{#2}}}
+{% endraw %}
+
+\begin{document}
+
+{\Huge @@@ name @@@, Ph.D.}
+
+\vspace{3mm}
+
+{% if website %}\href{@@@ website @@@}{@@@ website.removeprefix("https://") @@@}
+    $\cdot${% endif %}
+{% if linkedin %}\href{https://linkedin.com/in/@@@ linkedin @@@}{\includegraphics[scale=0.055]{img/LI-In-Bug}\
+    linkedin.com/in/@@@ linkedin @@@}
+    $\cdot${% endif %}
+{% if github %}\href{https://github.com/@@@ github @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px}\
+    github.com/@@@ github @@@}
+    $\cdot${% endif %}
+\href{https://bioregistry.io/wikidata:@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo}\ @@@ qid @@@}
+$\cdot$
+\href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}\ https://orcid.org/@@@ orcid @@@}
+$\cdot$
+{% if website %}\href{https://scholar.google.com/citations?user=@@@ gscholar
+    @@@}{\includegraphics[scale=0.015625]{img/google_scholar_icon_130918} @@@ gscholar @@@}
+{% endif %}
+
+\section{Fields of Work}\label{sec:fields}
+
+{% for topic_qid, topic in topics|dictsort %}
+    \wikidata{@@@ topic_qid @@@}{@@@ topic.title() @@@}{% if not loop.last %}, {% endif %}
+{% endfor %}
+
+{% if languages %}
+    \section{Spoken Languages}\label{sec:languages}
+
+    {% for language_qid, language in languages|dictsort %}
+        \wikidata{@@@ language_qid @@@}{@@@ language.title() @@@}{% if not loop.last %},
+    {% endif %}
+    {% endfor %}
+{% endif %}
+
+\section{Education}\label{sec:education}
+\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Research Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
+\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Research Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
+\cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.95/4.0 (Summa Cum Laude)\\Research Advisor: Prof. Dr. Michael P. Pollastri}
+
+\section{Employment}\label{sec:employment}
+
+\cventry{2021--}{Research Fellow}{Harvard Medical School, Laboratory of Systems Pharmacology}{Boston, MA}{USA (remote)}{Biocuration, data standardization, natural language processing, data integration, and automated assembly of knowledge and models}
+\cventry{2020}{Computational Biologist}{Enveda Biosciences}{Boulder, CO}{USA (remote)}{Biomedical data integration, knowledge graph construction, and analysis}
+\cventry{2018--19}{Lecturer}{University of Bonn}{Bonn}{Germany}{}
+\cventry{2016--19}{Research Fellow}{Fraunhofer SCAI, Dept. of Bioinformatics}{Sankt Augustin}{Germany}{Systems biology modeling and analysis with the Biological Expression Language}
+\cventry{2012--15}{Teaching Assistant}{Northeastern University}{Boston, MA}{USA}{}
+\cventry{2014}{\textit{in Silico} Lead Discovery Co-op}{Novartis}{Cambridge, MA}{USA}{Mechanism of action deconvolution in high-throughput black-box phenotypic screens}
+\cventry{2013--14}{Molecular Informatics Internship}{Pfizer}{Cambridge, MA}{USA}{Software development and database development for cancer genomics data}
+\cventry{2013}{Post-Selection Chemistry Co-op}{GlaxoSmithKline}{Waltham, MA}{USA}{Lead optimization of antivirals identified by ultra-high-throughput screening}
+\cventry{2012}{Research Assistant}{Pollastri Laboratory, Northeastern University}{Boston, MA}{USA}{Medicinal synthetic chemistry for repurposing PDE4 inhibitors against \textit{T. Brucei}}
+
+\section{Awards}
+\cventry{2023}{Nominated, Excellence in Biocuration Early Career Award}{International Society of Biocuration}{}{}{}
+\cventry{2015}{Bernie Lemire Award}{Department of Chemistry, Northeastern University}{}{}{}
+\cventry{2011}{Presidential Scholarship}{Northeastern University}{}{}{}
+
+\newpage
+
+{\huge Research}
+
+{% set co = namespace(counter=0) %}
+\section{Publications}
+
+Author lists have been omitted to reduce visual clutter. The following are noted:
+
+\begin{itemize}
+\item $\dagger$ signifies first or co-first authorship
+\item $\ddagger$ signifies last or senior authorship
+\end{itemize}
+
+\vspace{0.5cm}
+
+{% for year, papers in papers_dd|dictsort|reverse %}
+    \begin{enumerate}
+    \setcounter{enumi}{@@@ co.counter @@@}
+    \itemsep0.5em
+    {% for record in papers %}
+        \item
+        @@@ utils.render_publication(record, show_year=True) @@@
+    {% endfor %}
+    {% set co.counter = co.counter + (papers|length) %}
+    \end{enumerate}
+{% endfor %}
+
+\section{Invited Presentations}
+\begin{enumerate}
+\itemsep0.5em
+{% for record in invited %}
+    \item @@@ utils.render_talk(record) @@@
+{% endfor %}
+\end{enumerate}
+
+\section{Talks and Posters}
+\begin{enumerate}
+\itemsep0.5em
+{% for record in submitted %}
+    \item @@@ utils.render_talk(record) @@@
+{% endfor %}
+\end{enumerate}
+
+{% if software %}
+    \section{Research Software}\label{sec:software}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for package in software %}
+        {% if not package.skipcv %}
+        \item @@@ utils.render_software(package) @@@
+        {% endif %}
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+{% if databases %}
+    \section{Databases}\label{sec:databases}
+    \begin{enumerate}
+    \itemsep0.5em
+    {% for database in databases %}
+        \item @@@ utils.render_database(database) @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+{% if databases_contributions %}
+    \subsection{External Contributions}\label{sec:contributions}
+    {% for database in databases_contributions %}
+        \wikidata{@@@ database.item @@@}{@@@ (database.abbreviation or database.itemLabel).upper() @@@}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if reviews %}
+    @@@ list_publications(reviews, "Reviews") @@@
+{% endif %}
+
+{% if acknowledgements %}
+    @@@ list_publications(acknowledgements, "Acknowledgements") @@@
+{% endif %}
+
+{% if fundings %}
+\section{Funding}
+    \begin{enumerate}
+    \itemsep0.75em
+    {% for funding in fundings %}
+    \item {% if not funding.current %}(past){% endif %} \textbf{@@@ funding.name @@@}\\
+        @@@ funding.funder @@@{% if funding.award %}, (@@@ funding.award @@@){% endif %}, @@@ funding.money @@@\\
+        Role: @@@ funding.role @@@
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\hfill \break
+{\huge Community}
+
+{% if organizations %}
+    \section{Professional Affiliations}
+    \begin{itemize}
+    {% for organization in organizations %}
+        \item @@@ utils.render_organization(organization) @@@
+    {% endfor %}
+    \end{itemize}
+{% endif %}
+
+\section{Service to the Community}
+
+\subsection{Scholarly Journals}
+
+\begin{enumerate}
+\item Scientific article reviewer in:
+\begin{itemize}
+{% for n in reviewers.journals %}
+    \item @@@ n @@@
+{% endfor %}
+\end{itemize}
+\item Reproducibility Editor, Journal of Cheminformatics (pending)
+\end{enumerate}
+
+{% if conference_committees %}
+    \subsection{Conference Organizing Committees}
+    \begin{enumerate}
+    {% for record in conference_committees %}
+        \item \href{@@@ record.url @@@}{@@@ record.name @@@} (@@@ record.role @@@)
+    {% endfor %}
+    \end{enumerate}
+{% endif %}
+
+\hfill \break
+{\huge Teaching}
+
+{% if courses %}
+    \section{Courses Taught}
+    {% for location, sub_courses in courses.items() %}
+        \subsection{@@@ location @@@}
+        \begin{enumerate}
+        {% for course in sub_courses %}
+        \item @@@ utils.render_course(course) @@@
+        {% endfor %}
+        \end{enumerate}
+    {% endfor %}
+{% endif %}
+
+{% if mentees %}
+    \section{Supervision}
+    {% for location, sub_mentees in mentees.items() %}
+    \subsection{@@@ location @@@}
+        \begin{itemize}
+        {% for mentee in sub_mentees %}
+        \item @@@ utils.render_mentee(mentee, location) @@@
+        {% endfor %}
+        \end{itemize}
+    {% endfor %}
+{% endif %}
+
+\end{document}

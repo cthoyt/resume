@@ -1,0 +1,14 @@
+PREFIX target: <http://www.wikidata.org/entity/@@@ qid @@@>
+
+SELECT DISTINCT
+    ?item ?abbreviation ?itemLabel ?itemDescription ?repo ?website
+WHERE
+{
+    VALUES ?type { wd:Q8513 wd:Q324254 wd:Q1172480 wd:Q1397073 }
+    ?item wdt:P170|wdt:P178 target: .
+    ?item wdt:P31/wdt:P279* ?type .
+    OPTIONAL { ?item wdt:P1813 ?abbreviation } .
+    OPTIONAL { ?item wdt:P1324 ?repo } .
+    OPTIONAL { ?item wdt:P856 ?website } .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}

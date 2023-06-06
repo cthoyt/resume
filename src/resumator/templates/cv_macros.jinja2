@@ -1,0 +1,74 @@
+{% macro render_publication(record, show_year=True) %}
+    {% set venue = record.venueShort or record.venueLabel %}
+    {% set year = record.date.split("-")[0] %}
+    {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" %}(preprint) {% endif %}
+    {% if record.first %}$\dagger${% endif %}{% if record.senior %}$\ddagger${% endif %}\wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
+    \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
+    {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}. {% endif %}
+    {% if record.pubmed and not record.doi %} {\scriptsize \href{https://bioregistry.io/pubmed:@@@record.pubmed @@@}{PMID:@@@ record.pubmed @@@}}{% endif %}
+    {% if record.pmc and not record.doi %} {\scriptsize \href{https://bioregistry.io/pmc:@@@record.pmc @@@}{@@@ record.pmc @@@}}{% endif %}
+    {% if record.doi %} {\scriptsize \href{https://bioregistry.io/doi:@@@record.doi @@@}{doi:@@@ record.doi.lower() @@@}}{% endif %}
+    {% if record.arxiv and not (record.pubmed or record.doi) %} {\scriptsize
+        \href{https://bioregistry.io/arxiv:@@@record.arxiv @@@}{arxiv:@@@record.arxiv @@@}}}{% endif %}
+    {% if record.biorxiv and not record.pubmed %} {\scriptsize \href{https://bioregistry.io/biorxiv:@@@ record.biorxiv @@@}{biorxiv:@@@ record.biorxiv @@@}}}{% endif %}
+    {% if record.ceurws and not record.doi %} {\scriptsize \href{@@@ record.url @@@}{ceur-ws:@@@ record.ceurws @@@}}}
+    {% endif %}
+{% endmacro %}
+
+{% macro list_publications(records, title) -%}
+    {% if records %}
+        \section{@@@ title.title() @@@}\label{sec:@@@ title.lower() @@@}
+
+        Note that this section is automatically generated from Wikidata and is not necessarily complete.
+
+        \begin{enumerate}
+        \itemsep0.5em
+        {% for record in records %}
+            \item @@@ render_publication(record) @@@
+        {% endfor %}
+        \end{enumerate}
+    {% endif %}
+{% endmacro %}
+
+{% macro href_orcid(orcid) %}
+    \href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}}
+{% endmacro %}
+
+{% macro render_mentee(mentee, role_name) %}
+    @@@ mentee.name @@@ {% if mentee.orcid %}{\scriptsize @@@ href_orcid(mentee.orcid) @@@}{% endif %}
+    {% for role in mentee.roles %}
+    {% if role.location.organization.name == role_name %}
+    @@@ role.name @@@ (@@@ role.start.month @@@{% if role.start.year != role.end.year %} @@@ role.start.year @@@{% endif %} - {% if role.end %}@@@ role.end.month @@@ @@@ role.end.year @@@{% endif %})
+    {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_course(course) %}
+    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)
+{% endmacro %}
+
+{% macro render_event(event) %}
+    @@@ event.eventLabel @@@ {% if event.locations %}(@@@ event.locations @@@){% endif %} (@@@ event.date @@@)
+{% endmacro %}
+
+{% macro render_organization(organization) %}
+    \href{https://bioregistry.io/wikidata:@@@ organization.wikidata @@@}{@@@ organization.name @@@} (@@@ organization.start.year @@@ -{% if organization.end %} @@@ organization.end.year @@@{% endif %})
+{% endmacro %}
+
+{% macro render_software(package) %}
+\textbf{@@@ package.name @@@}\hfill@@@ github_link(package.github) @@@\\
+    @@@ (package.description).rstrip(".") @@@
+{% endmacro %}
+
+{% macro render_database(record) %}
+\textbf{@@@ record.name @@@}\hfill{% if record.github %}@@@ github_link(record.github) @@@{% endif %}{% if record.url %}, \url{@@@ record.url @@@}{% endif %}\\
+    @@@ (record.description).rstrip(".") @@@
+{% endmacro %}
+
+{% macro github_link(repo) %}
+\href{https://github.com/@@@ repo.replace("_", "\\_") @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px} @@@ repo.replace("_", "\\_") @@@}
+{% endmacro %}
+
+{% macro render_talk(record) %}
+\textbf{\href{@@@ record.url @@@}{@@@ record.name @@@}}. \textit{@@@ record.venue @@@} (@@@ record.date.month @@@ @@@ record.date.day @@@, @@@record.date.year @@@{% if record.poster %}; poster{% endif %})
+{% endmacro %}
