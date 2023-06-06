@@ -8,9 +8,9 @@ import json
 import re
 from collections import defaultdict
 from functools import lru_cache
-from pathlib import Path
 from operator import itemgetter
-from typing import Optional, Sequence, Literal
+from pathlib import Path
+from typing import Literal, Optional, Sequence
 
 import click
 import pystow
@@ -247,7 +247,8 @@ def _process_papers(
         papers = [
             paper
             for paper in papers
-            if "figshare." not in paper.get("doi", "").lower() and "figshare.com" not in paper.get("url", "").lower()
+            if "figshare." not in paper.get("doi", "").lower()
+            and "figshare.com" not in paper.get("url", "").lower()
         ]
     for paper in papers:
         _clean_pmc(paper)
@@ -275,7 +276,17 @@ def _clean_ceurs(paper: dict[str, any]) -> None:
 def _deduplicate(papers: Sequence[dict[str, any]]) -> Sequence[dict[str, any]]:
     title_to_papers = defaultdict(list)
     for paper in papers:
-        title = paper["workLabel"].rstrip().rstrip(":").rstrip(".").lower().replace("-", "").replace(" ", "").replace(",", "").replace("z", "s")
+        title = (
+            paper["workLabel"]
+            .rstrip()
+            .rstrip(":")
+            .rstrip(".")
+            .lower()
+            .replace("-", "")
+            .replace(" ", "")
+            .replace(",", "")
+            .replace("z", "s")
+        )
         title_to_papers[title].append(paper)
     return [_get_best(group) for group in title_to_papers.values()]
 
@@ -368,8 +379,7 @@ def main(qid: str, refresh: bool):
         "Q115317009",
         "Q111337218",
         "Q109583780",
-        "Q96909013"
-        "Q63709723",
+        "Q96909013" "Q63709723",
         "Q96909013",
         "Q61473695",
         "Q64911025",
@@ -418,10 +428,18 @@ def main(qid: str, refresh: bool):
 
     events = get_events(qid, refresh=refresh)
 
-    conference_committees = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/service.yml"))
-    reviewers = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/reviewer.yml"))
-    organizations = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/organizations.yml"))
-    fundings = yaml.safe_load(open("/Users/cthoyt/dev/cthoyt.github.io/_data/funding.yml"))
+    conference_committees = yaml.safe_load(
+        open("/Users/cthoyt/dev/cthoyt.github.io/_data/service.yml")
+    )
+    reviewers = yaml.safe_load(
+        open("/Users/cthoyt/dev/cthoyt.github.io/_data/reviewer.yml")
+    )
+    organizations = yaml.safe_load(
+        open("/Users/cthoyt/dev/cthoyt.github.io/_data/organizations.yml")
+    )
+    fundings = yaml.safe_load(
+        open("/Users/cthoyt/dev/cthoyt.github.io/_data/funding.yml")
+    )
     databases = yaml.safe_load(ctdata.joinpath("databases.yml").read_text())
 
     software = yaml.safe_load(software_path.read_text())
