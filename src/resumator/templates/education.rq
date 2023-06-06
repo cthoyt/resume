@@ -1,5 +1,5 @@
 SELECT
-  ?institution ?institutionLabel ?degree ?degreeLabel ?start_date ?end_date ?country ?countryLabel
+  ?institution ?institutionLabel ?degree ?degreeLabel ?start_date ?end_date ?country ?countryLabel ?thesis ?thesisLabel
 WHERE
 {
   wd:@@@ qid @@@ p:P69 ?statement .
@@ -8,6 +8,7 @@ WHERE
   OPTIONAL { ?statement pq:P512 ?degree . }
   OPTIONAL { ?statement pq:P580 ?start_date . }
   OPTIONAL { ?statement pq:P582 ?end_date . }
+  OPTIONAL { ?statement pq:P1026 ?thesis . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". } # Helps get the label in your language, if not, then en language
 }
 ORDER BY DESC(?start_date)

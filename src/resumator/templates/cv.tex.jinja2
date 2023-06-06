@@ -55,14 +55,10 @@ $\cdot$
     {% endfor %}
 {% endif %}
 
-{% if degrees %}
-    \section{Education}\label{sec:education}
-
-    {% for record in degrees %}
-        \cventry{@@@ record.period @@@}{@@@ record.degreeLabel.title() @@@}{}{}{@@@ record.institutionLabel @@@, @@@
-        record.countryLabel @@@}{}
-    {% endfor %}
-{% endif %}
+\section{Education}\label{sec:education}
+\cventry{2018--19}{Doctor of Philosophy}{Computational Life Sciences}{University of Bonn}{}{Thesis: \xref{https://github.com/cthoyt/doctoral-thesis}{\textit{Generation and Applications of Knowledge Graphs in Systems and Networks Biology}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\ GPA: 1,3 (Magna Cum Laude)}
+\cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \xref{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
+\cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.95/4.0 (Summa Cum Laude)}
 
 {% if employers %}
     \section{Employment}\label{sec:employment}
@@ -74,9 +70,9 @@ $\cdot$
 {% endif %}
 
 \section{Awards}
-\cventry{2023}{Nominated, Excellence in Biocuration Early Career Award}{}{}{}{}
-\cventry{2015}{Bernie Lemire Award}{}{}{}{}
-\cventry{2011}{Presidential Scholarship}{}{}{}{}
+\cventry{2023}{Nominated, Excellence in Biocuration Early Career Award}{International Society of Biocuration}{}{}{}
+\cventry{2015}{Bernie Lemire Award}{Department of Chemistry, Northeastern University}{}{}{}
+\cventry{2011}{Presidential Scholarship}{Northeastern University}{}{}{}
 
 \hfill \break
 
@@ -98,7 +94,7 @@ $\cdot$
 
 \section{Invited Presentations}
 \begin{enumerate}
-\itemsep0.75em
+\itemsep0.5em
 {% for record in invited %}
     \item @@@ utils.render_talk(record) @@@
 {% endfor %}
@@ -106,7 +102,7 @@ $\cdot$
 
 \section{Talks and Posters}
 \begin{enumerate}
-\itemsep0.75em
+\itemsep0.5em
 {% for record in submitted %}
     \item @@@ utils.render_talk(record) @@@
 {% endfor %}
@@ -169,15 +165,6 @@ $\cdot$
         \item @@@ utils.render_organization(organization) @@@
     {% endfor %}
     \end{itemize}
-{% endif %}
-
-{% if events %}
-    \section{Events Attended}
-    \begin{enumerate}
-    {% for event in events %}
-        \item @@@ utils.render_event(event) @@@
-    {% endfor %}
-    \end{enumerate}
 {% endif %}
 
 \section{Service to the Community}
