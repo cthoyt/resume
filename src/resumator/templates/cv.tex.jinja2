@@ -91,7 +91,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 \item $\ddagger$ signifies last or senior authorship
 \end{itemize}
 
-\vspace{0.5cm}
+\vspace{0.3cm}
 
 {% for year, papers in papers_dd|dictsort|reverse %}
     \begin{enumerate}
@@ -122,7 +122,20 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 \end{enumerate}
 
 {% if software %}
-    \section{Research Software}\label{sec:software}
+    \section{Research Software (Selected)}\label{sec:software}
+
+    Achieving reproducibility and reusability in the computational
+    sciences heavily depends on code that is developed,
+    tested, documented, and distributed according to best software
+    development practices. I aim to make as much of my research
+    as possible available and reusable in the form of open source
+    software. Accordingly, I have pushed tens of thousands of commits
+    to GitHub across my own and external projects to which I have
+    contributed. I have also written extensively on teaching best
+    practices to scientists on \href{https://cthoyt.com/software/}{my blog}.
+
+    \vspace{0.3cm}
+
     \begin{enumerate}
     \itemsep0.5em
     {% for package in software %}
@@ -134,7 +147,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 {% endif %}
 
 {% if databases %}
-    \section{Databases}\label{sec:databases}
+    \section{Databases (Selected)}\label{sec:databases}
     \begin{enumerate}
     \itemsep0.5em
     {% for database in databases %}
@@ -145,6 +158,16 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 
 {% if databases_contributions %}
     \subsection{External Contributions}\label{sec:contributions}
+
+    Manually and semi-automatically curated resources benefit greatly
+    from open governance models that enable external contribution. Instead
+    of creating siloed or single use improvements to resources I consume,
+    I aim to make as many upstream contributions as possible. Accordingly,
+    I have made hundreds of small contributions across 50+ ontologies
+    in the OBO Foundry and other resources including:
+
+    \vspace{0.3cm}
+
     {% for database in databases_contributions %}
         \wikidata{@@@ database.item @@@}{@@@ (database.abbreviation or database.itemLabel).upper() @@@}{% if not loop.last %},{% endif %}
     {% endfor %}
@@ -165,6 +188,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
     {% for funding in fundings %}
     \item {% if not funding.current %}(past){% endif %} \textbf{@@@ funding.name @@@}\\
         @@@ funding.funder @@@{% if funding.award %}, (@@@ funding.award @@@){% endif %}, @@@ funding.money @@@\\
+        PI: @@@ funding.pi @@@\\
         Role: @@@ funding.role @@@
     {% endfor %}
     \end{enumerate}
@@ -187,7 +211,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 \subsection{Scholarly Journals}
 
 \begin{enumerate}
-\item Scientific article reviewer in:
+\item Scientific article reviewer (\textit{ad hoc}) in:
 \begin{itemize}
 {% for n in reviewers.journals %}
     \item @@@ n @@@
@@ -205,7 +229,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
     \end{enumerate}
 {% endif %}
 
-\hfill \break
+\pagebreak
 {\huge Teaching}
 
 {% if courses %}
