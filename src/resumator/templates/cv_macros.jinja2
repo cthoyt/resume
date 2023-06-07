@@ -44,7 +44,7 @@
 {% endmacro %}
 
 {% macro render_course(course) %}
-    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)
+    @@@ course.name @@@ (@@@ course.type @@@; @@@ course.role @@@; @@@ course.period.semester @@@ @@@ course.period.year @@@)
 {% endmacro %}
 
 {% macro render_event(event) %}
