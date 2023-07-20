@@ -375,11 +375,13 @@ def main(qid: str, refresh: bool):
     papers_dd = defaultdict(list)
     papers = get_papers(qid, refresh=refresh)
     firsts = {
+        "Q120200936",
         "Q118774152",
         "Q115317009",
         "Q111337218",
         "Q109583780",
-        "Q96909013" "Q63709723",
+        "Q96909013",
+        "Q63709723",
         "Q96909013",
         "Q61473695",
         "Q64911025",
