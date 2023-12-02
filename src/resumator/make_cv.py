@@ -389,6 +389,7 @@ def main(qid: str, refresh: bool):
         "Q55315340",
         "Q42695788",
         "Q63709723",
+        "Q123462831",  # o3
     }
     seniors = {
         "Q118774035",
