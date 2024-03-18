@@ -431,7 +431,7 @@ def main(qid: str, refresh: bool):
 
     events = get_events(qid, refresh=refresh)
 
-    conference_committees = yaml.safe_load(
+    service = yaml.safe_load(
         open("/Users/cthoyt/dev/cthoyt.github.io/_data/service.yml")
     )
     reviewers = yaml.safe_load(
@@ -480,7 +480,8 @@ def main(qid: str, refresh: bool):
         submitted=submitted,
         databases=databases,
         databases_contributions=databases_contributions,
-        conference_committees=conference_committees,
+        conference_committees=[s for s in service if s['type'] == "conference"],
+        other_service=[s for s in service if s['type'] != "conference"],
         reviewers=reviewers,
         fundings=fundings,
         organizations=organizations,

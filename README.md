@@ -12,18 +12,18 @@ entry, and my [Scholia](https://tools.wmflabs.org/scholia/author/Q47475003) page
 To build my résumé as a PDF, clone the repository and use the following command:
 
 ```shell
-$ git clone https://github.com/cthoyt/resume.git
-$ cd resume
-$ latexmk -pdf -interaction=nonstopmode -pvc main
-$ latexmk -pdf -file-line-error -halt-on-error -interaction=nonstopmode main
+git clone https://github.com/cthoyt/resume.git
+cd resume
+latexmk -pdf -interaction=nonstopmode -pvc main
+latexmk -pdf -file-line-error -halt-on-error -interaction=nonstopmode main
 ```
 
 CV
 
 ```shell
-$ git clone https://github.com/cthoyt/resume.git
-$ cd resume
-$ python src/resumator/make_cv.py
-$ latexmk -pdf -interaction=nonstopmode -pvc cv
-$ latexmk -pdf -file-line-error -halt-on-error -interaction=nonstopmode cv
+git clone https://github.com/cthoyt/resume.git
+cd resume
+python src/resumator/make_cv.py
+latexmk -pdf -interaction=nonstopmode -pvc cv
+latexmk -pdf -file-line-error -halt-on-error -interaction=nonstopmode cv
 ```
