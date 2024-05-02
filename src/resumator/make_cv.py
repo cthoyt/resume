@@ -137,6 +137,7 @@ def get_attributes(qid: str, *, refresh: bool) -> dict[str, str]:
     res = render_query("attrs", qid=qid, refresh=refresh)[0]
     res["nationality"] = res["nationalityLabel"]
     res["name"] = res["personLabel"]
+    # TODO add mastodon parsing into mastodon_host and mastodon_user
     return res
 
 
