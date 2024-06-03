@@ -46,6 +46,9 @@ CHARLIE = "Q47475003"
 CEURWS_RE = re.compile(r"^https?://ceur-ws\.org/Vol-(\d+)/paper-?(\d+)")
 QID_RE = re.compile(r"^Q\d+$")
 PREPRINT_NAMES = {"chemrxiv", "arxiv", "biorxiv", "medxriv"}
+SKIP_PAPERS = {
+    "Q125455971": "this is a duplicate of Q72584451",
+}
 
 
 class Date(BaseModel):
@@ -137,6 +140,7 @@ def get_attributes(qid: str, *, refresh: bool) -> dict[str, str]:
     res = render_query("attrs", qid=qid, refresh=refresh)[0]
     res["nationality"] = res["nationalityLabel"]
     res["name"] = res["personLabel"]
+    print(res)
     # TODO add mastodon parsing into mastodon_host and mastodon_user
     return res
 
@@ -390,7 +394,8 @@ def main(qid: str, refresh: bool):
         "Q55315340",
         "Q42695788",
         "Q63709723",
-        "Q123462831",  # o3
+        "Q123462831",  # o3 preprint
+        "Q126325456",  # o3 peer reviewed
     }
     seniors = {
         "Q118774035",
@@ -398,6 +403,8 @@ def main(qid: str, refresh: bool):
     for paper in papers:
         if paper["work"] == "Q107296731":
             continue  # look for my future blog post on what I consider borderline misconduct from Jochen Garke on this
+        if paper["work"] in SKIP_PAPERS:
+            continue
         if paper["work"] in firsts:
             paper["first"] = True
         if paper["work"] in seniors:
@@ -481,8 +488,8 @@ def main(qid: str, refresh: bool):
         submitted=submitted,
         databases=databases,
         databases_contributions=databases_contributions,
-        conference_committees=[s for s in service if s['type'] == "conference"],
-        other_service=[s for s in service if s['type'] != "conference"],
+        conference_committees=[s for s in service if s["type"] == "conference"],
+        other_service=[s for s in service if s["type"] != "conference"],
         reviewers=reviewers,
         fundings=fundings,
         organizations=organizations,
