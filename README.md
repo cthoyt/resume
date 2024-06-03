@@ -23,6 +23,7 @@ CV
 ```shell
 git clone https://github.com/cthoyt/resume.git
 cd resume
+python -m pip install -r requirements.txt
 python src/resumator/make_cv.py
 latexmk -pdf -interaction=nonstopmode -pvc cv
 latexmk -pdf -file-line-error -halt-on-error -interaction=nonstopmode cv

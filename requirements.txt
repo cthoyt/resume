@@ -1,0 +1,6 @@
+pydantic
+pystow
+click
+requests
+pyyaml
+jinja2
