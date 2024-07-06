@@ -32,7 +32,7 @@
 {% if github %}\href{https://github.com/@@@ github @@@}{\includegraphics[scale=0.25]{img/GitHub-Mark-32px}\
     github.com/@@@ github @@@}
     $\cdot$ {% endif %}
-{% if mastodon_host and mastodon_user %}\href{https://@@@ mastodon_host @@@/@ @@@ mastodon_user @@@}{\includegraphics[scale=0.035]{img/mastodon} at @@@ mastodon_user @@@ at @@@ mastodon_host @@@}
+{% if mastodon %}\href{https://@@@ mastodon['host'] @@@/{% raw %}@{% endraw %}@@@ mastodon['user'] @@@}{\includegraphics[scale=0.035]{img/mastodon} {% raw %}@{% endraw %}@@@ mastodon['user'] @@@{% raw %}@{% endraw %}@@@ mastodon['host'] @@@}
     $\cdot${% endif %}
 \wikidata{@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo}\ @@@ qid @@@}
 \\

@@ -4,6 +4,7 @@ TODO conferences
 TODO professional affiliations
 """
 
+import datetime
 import json
 import re
 from collections import defaultdict
@@ -54,7 +55,7 @@ SKIP_PAPERS = {
 class Date(BaseModel):
     month: str
     year: int
-    day: Optional[str] = None
+    day: Optional[int] = None
 
 
 class Organization(BaseModel):
@@ -91,7 +92,7 @@ class Mentee(BaseModel):
 
 class Period(BaseModel):
     semester: str
-    year: str
+    year: str | int
 
 
 class CourseLocation(BaseModel):
@@ -140,8 +141,11 @@ def get_attributes(qid: str, *, refresh: bool) -> dict[str, str]:
     res = render_query("attrs", qid=qid, refresh=refresh)[0]
     res["nationality"] = res["nationalityLabel"]
     res["name"] = res["personLabel"]
-    print(res)
-    # TODO add mastodon parsing into mastodon_host and mastodon_user
+
+    mastodon: str | None = res.pop("mastodon", None)
+    if mastodon is not None:
+        user, _, host = mastodon.partition("@")
+        res["mastodon"] = {"user": user, "host": host}
     return res
 
 
@@ -363,6 +367,9 @@ def query_wikidata_raw(sparql: str) -> list[dict[str, any]]:
 def main(qid: str, refresh: bool):
     if not QID_RE.fullmatch(qid):
         raise ValueError(f"Invalid wikidata identifier: {qid}")
+
+    ctdata = Path.home().joinpath("dev", "cthoyt.github.io", "_data")
+
     data = get_attributes(qid, refresh=refresh)
     topics = get_topics(qid, refresh=refresh)
     databases_contributions = get_databases_contributions(qid, refresh=refresh)
@@ -397,8 +404,9 @@ def main(qid: str, refresh: bool):
         "Q123462831",  # o3 preprint
         "Q126325456",  # o3 peer reviewed
     }
-    seniors = {
+    seniors_or_last = {
         "Q118774035",
+        "Q126325520",  # ptwt
     }
     for paper in papers:
         if paper["work"] == "Q107296731":
@@ -407,11 +415,19 @@ def main(qid: str, refresh: bool):
             continue
         if paper["work"] in firsts:
             paper["first"] = True
-        if paper["work"] in seniors:
+        if paper["work"] in seniors_or_last:
             paper["senior"] = True
         papers_dd[paper.get("date", "").split("-")[0]].append(paper)
 
-    ctdata = Path.home().joinpath("dev", "cthoyt.github.io", "_data")
+    in_preparation_path = ctdata.joinpath("in_preparation.yml")
+    in_preparation_papers = yaml.safe_load(in_preparation_path.read_text())
+    today_year = str(datetime.date.today().year)
+    for in_preparation_paper in in_preparation_papers:
+        in_preparation_paper["date"] = today_year
+        in_preparation_paper["workLabel"] = in_preparation_paper["name"]
+        in_preparation_paper["venueLabel"] = "in preparation"
+        papers_dd[today_year].append(in_preparation_paper)
+
     mentees_path = ctdata.joinpath("mentees.yml")
     courses_path = ctdata.joinpath("courses.yml")
     software_path = ctdata.joinpath("software.yml")
