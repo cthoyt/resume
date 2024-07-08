@@ -238,6 +238,12 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 {% endfor %}
 \end{itemize}
 \item Reproducibility Editor, Journal of Cheminformatics (pending)
+\item Grant reviewer for:
+\begin{itemize}
+{% for n in reviewers.grants %}
+    \item @@@ n @@@
+{% endfor %}
+\end{itemize}
 \end{enumerate}
 
 {% if conference_committees %}
