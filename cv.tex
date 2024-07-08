@@ -7,6 +7,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{multicol}
+\usepackage[pdftex]{hyperref}
 
 \usepackage[scale=0.8]{geometry} % Reduce document margins
 \setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
@@ -15,6 +16,19 @@
 
 \newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
 \newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1?provider=scholia}{{#2}}}
+
+\makeatletter
+\AtBeginDocument{
+  \hypersetup{
+    pdftitle = {Charles Tapley Hoyt - Curriculum Vitae},
+    pdfauthor = {Charles Tapley Hoyt},
+    pdfsubject={Curriculum Vitae},
+    pdfkeywords={Bioinformatics, Pathway Analysis, Machine Learning, Natural Language Processing, Ontology, Knowledge Graph, Proteochemometrics, Drug Repositioning, Systems Biology, Cheminformatics},
+  }
+}
+\makeatother
+
+\author{Charles Tapley Hoyt}
 
 \begin{document}
 
