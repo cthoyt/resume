@@ -1,39 +1,7 @@
+{% extends "cv_base.tex.jinja2" %}
 {% import 'cv_macros.jinja2' as utils %}
 
-\documentclass[10pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
-
-\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
-\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
-
-\usepackage{hyperref}
-\usepackage{graphicx}
-\usepackage{multicol}
-\usepackage[pdftex]{hyperref}
-
-\usepackage[scale=0.8]{geometry} % Reduce document margins
-\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
-\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
-
-{% raw %}
-\newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
-\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1?provider=scholia}{{#2}}}
-{% endraw %}
-
-\makeatletter
-\AtBeginDocument{
-  \hypersetup{
-    pdftitle = {Charles Tapley Hoyt - Curriculum Vitae},
-    pdfauthor = {Charles Tapley Hoyt},
-    pdfsubject={Curriculum Vitae},
-    pdfkeywords={{% for topic_qid, topic in topics|dictsort %}@@@ topic.title() @@@{% if not loop.last %}, {% endif %}{% endfor %}},
-  }
-}
-\makeatother
-
-\author{Charles Tapley Hoyt}
-
-\begin{document}
-
+{% block document %}
 {\Huge @@@ name @@@, Ph.D.}
 
 \vspace{3mm}
@@ -47,7 +15,7 @@
     github.com/@@@ github @@@}
     $\cdot$ {% endif %}
 {% if mastodon %}\href{https://@@@ mastodon['host'] @@@/{% raw %}@{% endraw %}@@@ mastodon['user'] @@@}{\includegraphics[scale=0.035]{img/mastodon} {% raw %}@{% endraw %}@@@ mastodon['user'] @@@{% raw %}@{% endraw %}@@@ mastodon['host'] @@@}
-    $\cdot${% endif %}
+    $\cdot$ {% endif %}
 \wikidata{@@@ qid @@@}{\includegraphics[scale=0.01]{img/wikidata_logo}\ @@@ qid @@@}
 \\
 \href{https://orcid.org/@@@ orcid @@@}{\includegraphics[scale=0.5]{img/ORCIDiD_icon16x16}\ https://orcid.org/@@@ orcid @@@}
@@ -101,29 +69,9 @@ I'm taking personal leave beginning May 2024 and will be considering new opportu
 
 {\huge Research}
 
-{% set co = namespace(counter=0) %}
 \section{Publications}
 
-Author lists have been omitted to reduce visual clutter. The following are noted:
-
-\begin{itemize}
-\item $\dagger$ signifies first or co-first authorship
-\item $\ddagger$ signifies last or senior authorship
-\end{itemize}
-
-\vspace{0.3cm}
-
-{% for year, papers in papers_dd|dictsort|reverse %}
-    \begin{enumerate}
-    \setcounter{enumi}{@@@ co.counter @@@}
-    \itemsep0.5em
-    {% for record in papers %}
-        \item
-        @@@ utils.render_publication(record, show_year=True) @@@
-    {% endfor %}
-    {% set co.counter = co.counter + (papers|length) %}
-    \end{enumerate}
-{% endfor %}
+@@@ utils.make_publications(papers_dd) @@@
 
 \section{Invited Presentations (Selected)}
 \begin{enumerate}
@@ -205,15 +153,7 @@ Author lists have been omitted to reduce visual clutter. The following are noted
 
 {% if fundings %}
 \section{Funding}
-    \begin{enumerate}
-    \itemsep0.75em
-    {% for funding in fundings %}
-    \item {% if not funding.current %}(past){% endif %} \textbf{@@@ funding.name @@@}\\
-        @@@ funding.funder @@@{% if funding.award %}, (@@@ funding.award @@@){% endif %}, @@@ funding.money @@@\\
-        PI: @@@ funding.pi @@@\\
-        Role: @@@ funding.role @@@
-    {% endfor %}
-    \end{enumerate}
+    @@@ utils.make_fundings(fundings) @@@
 {% endif %}
 
 \hfill \break
@@ -292,5 +232,4 @@ Author lists have been omitted to reduce visual clutter. The following are noted
         \end{itemize}
     {% endfor %}
 {% endif %}
-
-\end{document}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "cv_base.tex.jinja2" %}
+{% import 'cv_macros.jinja2' as utils %}
+
+{% block title %}Charles Tapley Hoyt - Funding{% endblock %}
+{% block author %}Charles Tapley Hoyt{% endblock %}
+{% block subject %}Funding{% endblock %}
+
+{% block document %}
+{\Huge @@@ name @@@, Ph.D. - Funding}
+
+\vspace{3mm}
+
+@@@ utils.make_fundings(fundings) @@@
+
+{% endblock %}

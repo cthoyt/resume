@@ -37,7 +37,11 @@ environment = Environment(
     variable_end_string="@@@",
 )
 CV_TEMPLATE = environment.get_template("cv.tex.jinja2")
-output = ROOT.joinpath("cv.tex")
+PUBS_TEMPLATE = environment.get_template("cv_pubs.tex.jinja2")
+FUNDINGS_TEMPLATE = environment.get_template("cv_fundings.tex.jinja2")
+CV_OUTPUT_PATH = ROOT.joinpath("cv.tex")
+PUBS_OUTPUT_PATH = ROOT.joinpath("publications.tex")
+FUNDING_OUTPUT_PATH = ROOT.joinpath("funding.tex")
 
 #: Wikidata SPARQL endpoint. See https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service#Interfacing
 WIKIDATA_ENDPOINT = "https://query.wikidata.org/bigdata/namespace/wdq/sparql"
@@ -524,7 +528,23 @@ def main(qid: str, refresh: bool):
         events=events,
         **data,
     )
-    output.write_text(tex)
+    CV_OUTPUT_PATH.write_text(tex)
+
+    pub_tex = PUBS_TEMPLATE.render(
+        qid=qid,
+        invited=invited,
+        submitted=submitted,
+        papers_dd=papers_dd,
+        **data,
+    )
+    PUBS_OUTPUT_PATH.write_text(pub_tex)
+
+    funding_tex = FUNDINGS_TEMPLATE.render(
+        qid=qid,
+        fundings=fundings,
+        **data,
+    )
+    FUNDING_OUTPUT_PATH.write_text(funding_tex)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,30 @@
+{% extends "cv_base.tex.jinja2" %}
+{% import 'cv_macros.jinja2' as utils %}
+
+{% block title %}Charles Tapley Hoyt - Publications{% endblock %}
+{% block author %}Charles Tapley Hoyt{% endblock %}
+{% block subject %}Publications{% endblock %}
+
+{% block document %}
+{\Huge @@@ name @@@, Ph.D. - Publications}
+
+\vspace{3mm}
+
+@@@ utils.make_publications(papers_dd) @@@
+
+\section{Invited Presentations (Selected)}
+\begin{enumerate}
+\itemsep0.5em
+{% for record in invited %}
+    \item @@@ utils.render_talk(record) @@@
+{% endfor %}
+\end{enumerate}
+
+\section{Talks and Posters (Selected)}
+\begin{enumerate}
+\itemsep0.5em
+{% for record in submitted %}
+    \item @@@ utils.render_talk(record) @@@
+{% endfor %}
+\end{enumerate}
+{% endblock %}

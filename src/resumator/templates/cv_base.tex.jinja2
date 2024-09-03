@@ -1,0 +1,41 @@
+{% import 'cv_macros.jinja2' as utils %}
+
+\documentclass[10pt,a4paper,sans]{moderncv} % Font sizes: 10, 11, or 12; paper sizes: a4paper, letterpaper, a5paper, legalpaper, executivepaper or landscape; font families: sans or roman
+
+\moderncvstyle{classic} % CV theme - options include: 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue} % CV color - options include: 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage[pdftex]{hyperref}
+
+\usepackage[scale=0.8]{geometry} % Reduce document margins
+\setlength{\hintscolumnwidth}{1.5cm} % Uncomment to change the width of the dates column
+\setlength{\makecvtitlenamewidth}{10cm} % For the 'classic' style, uncomment to adjust the width of the space allocated to your name
+
+{% raw %}
+\newcommand{\curie}[2]{\href{https://bioregistry.io/#1:#2}{{#1:#2}}}
+\newcommand{\wikidata}[2]{\href{https://bioregistry.io/wikidata:#1?provider=scholia}{{#2}}}
+{% endraw %}
+
+\makeatletter
+\AtBeginDocument{
+  \hypersetup{
+    pdftitle = {{% block title %}Charles Tapley Hoyt - Curriculum Vitae{% endblock %}},
+    pdfauthor = {{% block author %}Charles Tapley Hoyt{% endblock %}},
+    pdfsubject = {{% block subject %}Curriculum Vitae{% endblock %}},
+    {% if topics %}
+    pdfkeywords={{% for topic_qid, topic in topics|dictsort %}@@@ topic.title() @@@{% if not loop.last %}, {% endif %}{% endfor %}},
+    {% endif %}
+  }
+}
+\makeatother
+
+\author{Charles Tapley Hoyt}
+
+\begin{document}
+
+{% block document %}{% endblock %}
+
+\end{document}

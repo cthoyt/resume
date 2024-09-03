@@ -73,3 +73,39 @@
 {% macro render_talk(record) %}
 \textbf{\href{@@@ record.url @@@}{@@@ record.name @@@}}. \textit{@@@ record.venue @@@} (@@@ record.date.month @@@ @@@ record.date.day @@@, @@@record.date.year @@@{% if record.poster %}; poster{% endif %})
 {% endmacro %}
+
+{% macro make_publications(yyy) %}
+{% set co = namespace(counter=0) %}
+Author lists have been omitted to reduce visual clutter. The following are noted:
+
+\begin{itemize}
+\item $\dagger$ signifies first or co-first authorship
+\item $\ddagger$ signifies last or senior authorship
+\end{itemize}
+
+\vspace{0.3cm}
+
+{% for year, papers in yyy|dictsort|reverse %}
+    \begin{enumerate}
+    \setcounter{enumi}{@@@ co.counter @@@}
+    \itemsep0.5em
+    {% for record in papers %}
+        \item
+        @@@ render_publication(record, show_year=True) @@@
+    {% endfor %}
+    {% set co.counter = co.counter + (papers|length) %}
+    \end{enumerate}
+{% endfor %}
+{% endmacro %}
+
+{% macro make_fundings(fundings) %}
+\begin{enumerate}
+    \itemsep0.75em
+    {% for funding in fundings %}
+    \item {% if not funding.current %}(past){% endif %} \textbf{@@@ funding.name @@@}\\
+        @@@ funding.funder @@@{% if funding.award %}, (@@@ funding.award @@@){% endif %}, @@@ funding.money @@@\\
+        PI: @@@ funding.pi @@@\\
+        Role: @@@ funding.role @@@
+    {% endfor %}
+    \end{enumerate}
+{% endmacro %}
