@@ -425,7 +425,11 @@ def main(qid: str, refresh: bool):
     for in_preparation_paper in in_preparation_papers:
         in_preparation_paper["date"] = today_year
         in_preparation_paper["workLabel"] = in_preparation_paper["name"]
-        in_preparation_paper["venueLabel"] = "in preparation"
+        in_prep_venue = in_preparation_paper.get("venue")
+        if in_prep_venue:
+            in_preparation_paper["venueLabel"] = f"in preparation for {in_prep_venue}"
+        else:
+            in_preparation_paper["venueLabel"] = "in preparation"
         papers_dd[today_year].append(in_preparation_paper)
 
     mentees_path = ctdata.joinpath("mentees.yml")

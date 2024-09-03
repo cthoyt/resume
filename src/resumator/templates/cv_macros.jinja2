@@ -2,7 +2,7 @@
     {% set venue = record.venueShort or record.venueLabel %}
     {% set year = record.date.split("-")[0] %}
     {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" %}(preprint) {% endif %}
-    {% if venue == "in preparation" %}(in~preparation) {% endif %}
+    {% if venue.startswith("in preparation") %}(in~preparation) {% endif %}
     {% if record.first %}$\dagger${% endif %}{% if record.senior %}$\ddagger${% endif %}\wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
     \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
     {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}. {% endif %}
