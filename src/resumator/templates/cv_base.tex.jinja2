@@ -22,8 +22,8 @@
 \makeatletter
 \AtBeginDocument{
   \hypersetup{
-    pdftitle = {{% block title %}Charles Tapley Hoyt - Curriculum Vitae{% endblock %}},
-    pdfauthor = {{% block author %}Charles Tapley Hoyt{% endblock %}},
+    pdftitle = {{% block title %}@@@ name @@@ - Curriculum Vitae{% endblock %}},
+    pdfauthor = {@@@ name @@@},
     pdfsubject = {{% block subject %}Curriculum Vitae{% endblock %}},
     {% if topics %}
     pdfkeywords={{% for topic_qid, topic in topics|dictsort %}@@@ topic.title() @@@{% if not loop.last %}, {% endif %}{% endfor %}},
@@ -32,7 +32,7 @@
 }
 \makeatother
 
-\author{Charles Tapley Hoyt}
+\author{@@@ name @@@}
 
 \begin{document}
 
