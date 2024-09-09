@@ -417,9 +417,9 @@ def main(qid: str, refresh: bool):
             continue  # look for my future blog post on what I consider borderline misconduct from Jochen Garke on this
         if paper["work"] in SKIP_PAPERS:
             continue
-        if paper["work"] in firsts:
+        if paper["work"] in firsts or paper.get("first"):
             paper["first"] = True
-        if paper["work"] in seniors_or_last:
+        if paper["work"] in seniors_or_last or paper.get("last"):
             paper["senior"] = True
         papers_dd[paper.get("date", "").split("-")[0]].append(paper)
 
