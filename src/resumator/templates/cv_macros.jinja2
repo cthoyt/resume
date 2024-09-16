@@ -74,9 +74,11 @@
 \textbf{\href{@@@ record.url @@@}{@@@ record.name @@@}}. \textit{@@@ record.venue @@@} (@@@ record.date.month @@@ @@@ record.date.day @@@, @@@record.date.year @@@{% if record.poster %}; poster{% endif %})
 {% endmacro %}
 
-{% macro make_publications(yyy) %}
+{% macro make_publications(yyy, sss) %}
 {% set co = namespace(counter=0) %}
-Author lists have been omitted to reduce visual clutter. The following are noted:
+Author lists have been omitted to reduce visual clutter.
+There are a total of @@@ sss.values()|sum @@@ manuscripts (@@@ sss.peer_reviewed @@@ peer-reviewed, @@@ sss.preprints @@@ pre-printed, and @@@ sss.in_progress @@@ in preparation).
+The following are noted:
 
 \begin{itemize}
 \item $\dagger$ signifies first or co-first authorship

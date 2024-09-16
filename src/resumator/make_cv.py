@@ -504,6 +504,27 @@ def main(qid: str, refresh: bool):
                 else:
                     submitted.append(record)
 
+    peer_review_count = 0
+    preprint_count = 0
+    in_progress_count = 0
+    for year, papers in papers_dd.items():
+        for paper in papers:
+            venue = paper.get("venueLabel")
+            if venue is None:  # in preparation
+                in_progress_count += 1
+            elif venue.lower() in {"arxiv", "medrxiv", "chemrxiv", "biorxiv", "osf"}:
+                preprint_count += 1
+            elif venue.startswith("in preparation"):
+                in_progress_count += 1
+            else:
+                peer_review_count += 1
+
+    paper_stats = {
+        "peer_reviewed": peer_review_count,
+        "preprints": preprint_count,
+        "in_progress": in_progress_count,
+    }
+
     tex = CV_TEMPLATE.render(
         qid=qid,
         topics=topics,
@@ -521,6 +542,7 @@ def main(qid: str, refresh: bool):
         # reviews=reviews,
         # acknowledgements=acknowledgements,
         papers_dd=papers_dd,
+        papers_stats=paper_stats,
         employers=employers,
         degrees=degrees,
         mentees=mentees,
@@ -535,6 +557,7 @@ def main(qid: str, refresh: bool):
         invited=invited,
         submitted=submitted,
         papers_dd=papers_dd,
+        papers_stats=paper_stats,
         **data,
     )
     PUBS_OUTPUT_PATH.write_text(pub_tex)
