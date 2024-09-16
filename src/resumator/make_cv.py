@@ -11,7 +11,7 @@ from collections import defaultdict
 from functools import lru_cache
 from operator import itemgetter
 from pathlib import Path
-from typing import Literal, Optional, Sequence
+from typing import Literal, Optional, Sequence, Counter
 
 import click
 import pystow
@@ -106,7 +106,7 @@ class CourseLocation(BaseModel):
 
 class Course(BaseModel):
     name: str
-    level: Literal["Bachelor's Degree", "Master's course"]
+    level: Literal["Bachelor's Degree", "Master's course", "N/A"]
     type: Literal["Practical", "Seminar", "Lecture"]
     date: Optional[Date] = None
     start: Optional[Date] = None
@@ -452,6 +452,7 @@ def main(qid: str, refresh: bool):
                 mentees[role.location.organization.name].append(m)
 
     courses = defaultdict(list)
+    course_stats = Counter()
     for course in yaml.safe_load(courses_path.read_text()):
         try:
             c = Course.parse_obj(course)
@@ -460,6 +461,7 @@ def main(qid: str, refresh: bool):
             print(e)
         else:
             courses[c.location.university].append(c)
+            course_stats[c.type.lower()] += 1
 
     events = get_events(qid, refresh=refresh)
 
@@ -547,6 +549,7 @@ def main(qid: str, refresh: bool):
         degrees=degrees,
         mentees=mentees,
         courses=courses,
+        course_stats=course_stats,
         events=events,
         **data,
     )

@@ -153,7 +153,7 @@ $\cdot$
     @@@ utils.make_fundings(fundings) @@@
 {% endif %}
 
-\hfill \break
+\pagebreak
 {\huge Community}
 
 {% if organizations %}
@@ -208,6 +208,12 @@ $\cdot$
 
 {% if courses %}
     \section{Courses Taught}
+
+    I have given @@@ course_stats.lecture @@@ lectures,
+    @@@ course_stats.seminar @@@ seminars,
+    and @@@ course_stats.practical @@@ practicals / labs
+    as either the primary or a guest instructor.
+
     {% for location, sub_courses in courses.items() %}
         \subsection{@@@ location @@@}
         \begin{enumerate}
