@@ -407,6 +407,7 @@ def main(qid: str, refresh: bool):
         "Q63709723",
         "Q123462831",  # o3 preprint
         "Q126325456",  # o3 peer reviewed
+        "Q130365052",  # PNNL vaccinology review
     }
     seniors_or_last = {
         "Q118774035",
@@ -514,7 +515,7 @@ def main(qid: str, refresh: bool):
             venue = paper.get("venueLabel")
             if venue is None:  # in preparation
                 in_progress_count += 1
-            elif venue.lower() in {"arxiv", "medrxiv", "chemrxiv", "biorxiv", "osf"}:
+            elif venue.lower() in {"arxiv", "medrxiv", "chemrxiv", "biorxiv", "osf preprints"}:
                 preprint_count += 1
             elif venue.startswith("in preparation"):
                 in_progress_count += 1

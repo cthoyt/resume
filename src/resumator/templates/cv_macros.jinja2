@@ -1,7 +1,7 @@
 {% macro render_publication(record, show_year=True) %}
     {% set venue = record.venueShort or record.venueLabel %}
     {% set year = record.date.split("-")[0] %}
-    {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" %}(preprint) {% endif %}
+    {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" or venue == "OSF Preprints" %}(preprint) {% endif %}
     {% if venue.startswith("in preparation") %}(in~preparation) {% endif %}
     {% if record.first %}$\dagger${% endif %}{% if record.senior %}$\ddagger${% endif %}\wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
     \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
