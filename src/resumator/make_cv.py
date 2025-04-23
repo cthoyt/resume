@@ -407,7 +407,9 @@ def main(qid: str, refresh: bool):
         "Q63709723",
         "Q123462831",  # o3 preprint
         "Q126325456",  # o3 peer reviewed
-        "Q130365052",  # PNNL vaccinology review
+        "Q130365052",  # PNNL vaccinology review preprint
+        "Q134057794",  # PNNL vaccinology review post-print
+        "Q134057813", # SeMRA preprint
     }
     seniors_or_last = {
         "Q118774035",
@@ -444,7 +446,7 @@ def main(qid: str, refresh: bool):
     mentees = defaultdict(list)
     for mentee in yaml.safe_load(mentees_path.read_text()):
         try:
-            m = Mentee.parse_obj(mentee)
+            m = Mentee.model_validate(mentee)
         except ValueError as e:
             print(mentee["name"])
             print(e)
@@ -456,7 +458,7 @@ def main(qid: str, refresh: bool):
     course_stats = Counter()
     for course in yaml.safe_load(courses_path.read_text()):
         try:
-            c = Course.parse_obj(course)
+            c = Course.model_validate(course)
         except ValueError as e:
             print(course["name"])
             print(e)
