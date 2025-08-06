@@ -44,7 +44,7 @@ PUBS_OUTPUT_PATH = ROOT.joinpath("publications.tex")
 FUNDING_OUTPUT_PATH = ROOT.joinpath("funding.tex")
 
 #: Wikidata SPARQL endpoint. See https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service#Interfacing
-WIKIDATA_ENDPOINT = "https://query.wikidata.org/bigdata/namespace/wdq/sparql"
+WIKIDATA_LEGACY_ENDPOINT = "https://query-legacy-full.wikidata.org/sparql"
 WIKIBASE_LINE = """SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }"""
 
 CHARLIE = "Q47475003"
