@@ -10,5 +10,5 @@ WHERE
     OPTIONAL { ?item wdt:P1813 ?abbreviation } .
     OPTIONAL { ?item wdt:P1324 ?repo } .
     OPTIONAL { ?item wdt:P856 ?website } .
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }
 }

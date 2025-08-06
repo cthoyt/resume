@@ -9,6 +9,6 @@ WHERE
   OPTIONAL { ?statement pq:P580 ?start_date . }
   OPTIONAL { ?statement pq:P582 ?end_date . }
   OPTIONAL { ?statement pq:P1026 ?thesis . }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". } # Helps get the label in your language, if not, then en language
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". } # Helps get the label in your language, if not, then en language
 }
 ORDER BY DESC(?start_date)

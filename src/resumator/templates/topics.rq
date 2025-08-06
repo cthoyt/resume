@@ -3,5 +3,5 @@ SELECT
 WHERE
 {
     wd:@@@ qid @@@ wdt:P101 ?topic .
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }
 }

@@ -13,6 +13,6 @@ WHERE
     OPTIONAL { ?item wdt:P275/wdt:P1813 ?license } .
     OPTIONAL { ?item wdt:P1324 ?repo_ } .
     OPTIONAL { ?item wdt:P856 ?website_ } .
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }
 }
 GROUP BY ?item ?itemLabel ?itemDescription

@@ -8,5 +8,5 @@ WHERE {
     OPTIONAL { ?work wdt:P356 ?doi . }
     OPTIONAL { ?work wdt:P698 ?pubmed . }
     OPTIONAL { ?work wdt:P3951 ?biorxiv . }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,da,de,es,fr,jp,nl,no,ru,sv,zh". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "mul,en,da,de,es,fr,jp,nl,no,ru,sv,zh". }
 }

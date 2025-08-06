@@ -13,5 +13,5 @@ WHERE {
     OPTIONAL { ?work wdt:P3951 ?biorxiv . }
     OPTIONAL { ?work wdt:P953 ?url . }
     OPTIONAL { ?work wdt:P932 ?pmc . }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,da,de,es,fr,jp,no,ru,sv,zh". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "mul,en,da,de,es,fr,jp,no,ru,sv,zh". }
 }

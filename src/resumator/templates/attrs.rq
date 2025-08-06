@@ -11,6 +11,6 @@ WHERE
     OPTIONAL { ?person wdt:P856 ?website . }
     OPTIONAL { ?person wdt:P2037 ?github . }
     OPTIONAL { ?person wdt:P4033 ?mastodon . }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }
 }
 LIMIT 1
