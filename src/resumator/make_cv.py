@@ -13,9 +13,9 @@ from operator import itemgetter
 from pathlib import Path
 from typing import Literal, Optional, Sequence, Counter
 
+import wikidata_client
 import click
 import pystow
-import requests
 import yaml
 from jinja2 import Environment, FileSystemLoader, Template
 from pydantic import BaseModel, Field
@@ -125,7 +125,7 @@ def render_query(template: str, qid: str, *, refresh: bool):
 
     sparql = render(f"{template}.rq", qid=qid)
     print("querying with SPARQL:\n", sparql)
-    rv = query_wikidata(sparql)
+    rv = wikidata_client.query(sparql, endpoint=WIKIDATA_LEGACY_ENDPOINT)
     path.write_text(json.dumps(rv, indent=2, sort_keys=True))
     print("writing to", path)
     return rv
@@ -338,31 +338,6 @@ def _get_best(papers: Sequence[dict[str, any]]) -> dict[str, any]:
         return papers[0]
 
     return max(papers, key=lambda paper: paper.get("date", ""))
-
-
-def query_wikidata(sparql: str) -> list[dict[str, any]]:
-    """Query Wikidata's sparql service."""
-    results = query_wikidata_raw(sparql)
-    rows = []
-    for bindings in results:
-        for key in bindings:
-            bindings[key]["value"] = bindings[key]["value"].removeprefix(
-                "http://www.wikidata.org/entity/"
-            )
-        rows.append({key: value["value"] for key, value in bindings.items()})
-    return rows
-
-
-def query_wikidata_raw(sparql: str) -> list[dict[str, any]]:
-    """Query Wikidata's sparql service.
-
-    :param sparql: A SPARQL query string
-    :return: A list of bindings
-    """
-    res = requests.get(WIKIDATA_ENDPOINT, params={"query": sparql, "format": "json"})
-    res.raise_for_status()
-    res_json = res.json()
-    return res_json["results"]["bindings"]
 
 
 @click.command()
