@@ -384,10 +384,12 @@ def main(qid: str, refresh: bool):
         "Q126325456",  # o3 peer reviewed
         "Q130365052",  # PNNL vaccinology review preprint
         "Q134057794",  # PNNL vaccinology review post-print
-        "Q134057813", # SeMRA preprint
+        "Q134057813",  # SeMRA preprint
+        "Q135651916",  # y0 preprint
+        "Q135640681",  # chembl-downloader preprint
     }
     seniors_or_last = {
-        "Q118774035",
+        "Q118774035",  # clep
         "Q126325520",  # ptwt
     }
     for paper in papers:
@@ -404,7 +406,7 @@ def main(qid: str, refresh: bool):
     in_preparation_path = ctdata.joinpath("in_preparation.yml")
     in_preparation_papers = yaml.safe_load(in_preparation_path.read_text())
     today_year = str(datetime.date.today().year)
-    for in_preparation_paper in in_preparation_papers:
+    for in_preparation_paper in in_preparation_papers or []:
         in_preparation_paper["date"] = today_year
         in_preparation_paper["workLabel"] = in_preparation_paper["name"]
         in_prep_venue = in_preparation_paper.get("venue")
@@ -492,7 +494,13 @@ def main(qid: str, refresh: bool):
             venue = paper.get("venueLabel")
             if venue is None:  # in preparation
                 in_progress_count += 1
-            elif venue.lower() in {"arxiv", "medrxiv", "chemrxiv", "biorxiv", "osf preprints"}:
+            elif venue.lower() in {
+                "arxiv",
+                "medrxiv",
+                "chemrxiv",
+                "biorxiv",
+                "osf preprints",
+            }:
                 preprint_count += 1
             elif venue.startswith("in preparation"):
                 in_progress_count += 1
