@@ -2,7 +2,7 @@
     {% set venue = record.venueShort or record.venueLabel %}
     {% set year = record.date.split("-")[0] %}
     {% if venue == "arXiv" or venue == "medRxiv" or venue == "ChemRxiv" or venue == "bioRxiv" or venue == "OSF Preprints" %}(preprint) {% endif %}
-    {% if venue.startswith("in preparation") %}(in~preparation) {% endif %}
+    {% if venue.startswith("in preparation") %}(in~preparation) {% elif venue.startswith("submitted") %}(submitted) {% endif %}
     {% if record.first %}$\dagger${% endif %}{% if record.senior %}$\ddagger${% endif %}\wikidata{@@@ record.work @@@}{\textbf{@@@ record.workLabel.rstrip(".").rstrip().replace("'", "\'") @@@}}.
     \textit{@@@ venue @@@}{% if show_year and year not in venue %}, @@@ year @@@{% endif %}
     {% if record.pubmed or record.doi or record.arxiv or record.biorxiv or record.ceurws %}. {% endif %}
@@ -77,7 +77,7 @@
 {% macro make_publications(yyy, sss) %}
 {% set co = namespace(counter=0) %}
 Author lists have been omitted to reduce visual clutter.
-There are a total of @@@ sss.values()|sum @@@ manuscripts (@@@ sss.peer_reviewed @@@ peer-reviewed, @@@ sss.preprints @@@ pre-printed, and @@@ sss.in_progress @@@ in preparation).
+There are a total of @@@ sss.values()|sum @@@ manuscripts (@@@ sss.peer_reviewed @@@ peer-reviewed, @@@ sss.preprints @@@ pre-printed/submitted, and @@@ sss.in_progress @@@ in preparation).
 The following are noted:
 
 \begin{itemize}

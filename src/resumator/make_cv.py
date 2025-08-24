@@ -403,6 +403,11 @@ def main(qid: str, refresh: bool):
             paper["senior"] = True
         papers_dd[paper.get("date", "").split("-")[0]].append(paper)
 
+    status_to_preposition = {
+        "in preparation": "for",
+        "submitted": "to",
+    }
+
     in_preparation_path = ctdata.joinpath("in_preparation.yml")
     in_preparation_papers = yaml.safe_load(in_preparation_path.read_text())
     today_year = str(datetime.date.today().year)
@@ -410,10 +415,11 @@ def main(qid: str, refresh: bool):
         in_preparation_paper["date"] = today_year
         in_preparation_paper["workLabel"] = in_preparation_paper["name"]
         in_prep_venue = in_preparation_paper.get("venue")
+        status = in_preparation_paper.get("status", "in preparation")
         if in_prep_venue:
-            in_preparation_paper["venueLabel"] = f"in preparation for {in_prep_venue}"
+            in_preparation_paper["venueLabel"] = f"{status} {status_to_preposition[status]} {in_prep_venue}"
         else:
-            in_preparation_paper["venueLabel"] = "in preparation"
+            in_preparation_paper["venueLabel"] = status
         papers_dd[today_year].append(in_preparation_paper)
 
     mentees_path = ctdata.joinpath("mentees.yml")
@@ -487,13 +493,15 @@ def main(qid: str, refresh: bool):
                     submitted.append(record)
 
     peer_review_count = 0
-    preprint_count = 0
+    prepared = 0
     in_progress_count = 0
     for year, papers in papers_dd.items():
         for paper in papers:
             venue = paper.get("venueLabel")
             if venue is None:  # in preparation
                 in_progress_count += 1
+            elif venue.startswith("submitted"):
+                prepared += 1
             elif venue.lower() in {
                 "arxiv",
                 "medrxiv",
@@ -501,7 +509,7 @@ def main(qid: str, refresh: bool):
                 "biorxiv",
                 "osf preprints",
             }:
-                preprint_count += 1
+                prepared += 1
             elif venue.startswith("in preparation"):
                 in_progress_count += 1
             else:
@@ -509,7 +517,7 @@ def main(qid: str, refresh: bool):
 
     paper_stats = {
         "peer_reviewed": peer_review_count,
-        "preprints": preprint_count,
+        "preprints": prepared,
         "in_progress": in_progress_count,
     }
 
