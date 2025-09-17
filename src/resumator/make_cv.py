@@ -387,6 +387,7 @@ def main(qid: str, refresh: bool):
         "Q134057813",  # SeMRA preprint
         "Q135651916",  # y0 preprint
         "Q135640681",  # chembl-downloader preprint
+        "Q136308907",  # chembl-downloader
     }
     seniors_or_last = {
         "Q118774035",  # clep
