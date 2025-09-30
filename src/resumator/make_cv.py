@@ -396,10 +396,11 @@ def main(qid: str, refresh: bool):
         "Q126325456",  # o3 peer reviewed
         "Q130365052",  # PNNL vaccinology review preprint
         "Q134057794",  # PNNL vaccinology review post-print
-        "Q134057813",  # SeMRA preprint
         "Q135651916",  # y0 preprint
         "Q135640681",  # chembl-downloader preprint
         "Q136308907",  # chembl-downloader
+        "Q134057813",  # SeMRA preprint
+        "Q136408428",  # SeMRA
     }
     seniors_or_last = {
         "Q118774035",  # clep
