@@ -7,7 +7,7 @@ rm *.log
 rm *.out
 
 rm *.pdf
-python src/resumator/make_cv.py
+uv run --script src/resumator/make_cv.py
 pdflatex -interaction=nonstopmode cv.tex
 pdflatex -interaction=nonstopmode main.tex
 pdflatex -interaction=nonstopmode funding.tex

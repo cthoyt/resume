@@ -1,7 +1,0 @@
-pydantic
-pystow
-click
-requests
-pyyaml
-jinja2
-wikidata-client

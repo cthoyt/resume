@@ -1,3 +1,15 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "click",
+#     "jinja2",
+#     "pydantic",
+#     "pystow",
+#     "pyyaml",
+#     "wikidata-client",
+# ]
+# ///
+
 """
 TODO see http://eosrei.net/articles/2015/11/latex-templates-python-and-jinja2-generate-pdfs
 TODO conferences
