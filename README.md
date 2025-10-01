@@ -14,8 +14,8 @@ entry, and my [Scholia](https://tools.wmflabs.org/scholia/author/Q47475003) page
 
 To build my résumé and CV as a PDF, clone the repository and use the following command:
 
-```shell
-git clone https://github.com/cthoyt/resume.git
-cd resume
-sh build.sh
+```console
+$ git clone https://github.com/cthoyt/resume.git
+$ cd resume
+$ just build
 ```

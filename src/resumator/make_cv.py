@@ -405,6 +405,7 @@ def main(qid: str, refresh: bool):
     seniors_or_last = {
         "Q118774035",  # clep
         "Q126325520",  # ptwt
+        "Q136408639",  # ML rigor
     }
     for paper in papers:
         if paper["work"] == "Q107296731":
