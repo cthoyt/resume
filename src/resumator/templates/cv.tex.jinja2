@@ -64,7 +64,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 \cventry{2015--17}{Master of Science}{Life Science Informatics}{University of Bonn}{}{Thesis: \href{https://github.com/cthoyt/masters-thesis}{\textit{PyBEL: a Computational Framework for Biological Expression Language}}\\Research Advisor: Prof. Dr. Martin Hofmann-Apitius\\GPA: 1,6}
 \cventry{2011--15}{Bachelor of Science}{Chemistry}{Northeastern University}{}{GPA: 3.93/4.0 (Summa Cum Laude)\\Research Advisor: Prof. Dr. Michael P. Pollastri}
 
-\section{Awards}
+\section{Awards}\label{sec:awards}
 \cventry{2023}{Excellence in Biocuration Early Career Award}{International Society of Biocuration}{}{}{}
 \cventry{2015}{Bernie Lemire Award}{Department of Chemistry, Northeastern University}{}{}{}
 \cventry{2011}{Presidential Scholarship}{Northeastern University}{}{}{}
@@ -73,11 +73,11 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 
 {\huge Research}
 
-\section{Publications}
+\section{Publications}\label{sec:publications}
 
 @@@ utils.make_publications(papers_dd, papers_stats) @@@
 
-\section{Invited Presentations (Selected)}
+\section{Invited Presentations (Selected)}\label{sec:presentations}
 \begin{enumerate}
 \itemsep0.5em
 {% for record in invited %}
@@ -85,7 +85,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {% endfor %}
 \end{enumerate}
 
-\section{Talks and Posters (Selected)}
+\section{Talks and Posters (Selected)}\label{sec:talks-and-posters}
 \begin{enumerate}
 \itemsep0.5em
 {% for record in submitted %}
@@ -156,7 +156,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {% endif %}
 
 {% if fundings %}
-\section{Funding}
+\section{Funding}\label{sec:funding}
     @@@ utils.make_fundings(fundings) @@@
 {% endif %}
 
@@ -164,7 +164,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {\huge Community}
 
 {% if organizations %}
-    \section{Professional Affiliations}
+    \section{Professional Affiliations}\label{sec:affiliations}
     \begin{itemize}
     {% for organization in organizations %}
         \item @@@ utils.render_organization(organization) @@@
@@ -172,9 +172,9 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
     \end{itemize}
 {% endif %}
 
-\section{Service to the Community}
+\section{Service to the Community}\label{sec:service}
 
-\subsection{Scholarly Journals}
+\subsection{Scholarly Journals}\label{sec:journals}
 
 \begin{enumerate}
 \item Scientific article reviewer (\textit{ad hoc}) in:
@@ -193,7 +193,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 \end{enumerate}
 
 {% if conference_committees %}
-    \subsection{Conference Organizing Committees}
+    \subsection{Conference Organizing Committees}\label{sec:conference-organization}
     \begin{enumerate}
     {% for record in conference_committees %}
         \item \href{@@@ record.url @@@}{@@@ record.name @@@} (@@@ record.role @@@)
@@ -202,7 +202,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {% endif %}
 
 {% if other_service %}
-    \subsection{Other Service}
+    \subsection{Other Service}\label{sec:other-service}
     \begin{enumerate}
     {% for record in other_service %}
         \item \href{@@@ record.url @@@}{@@@ record.name @@@} (@@@ record.role @@@)
@@ -214,7 +214,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {\huge Teaching}
 
 {% if courses %}
-    \section{Courses Taught}
+    \section{Courses Taught}\label{sec:courses}
 
     I have given @@@ course_stats.lecture @@@ lectures,
     @@@ course_stats.seminar @@@ seminars,
@@ -232,7 +232,7 @@ Therefore, I'm interested in \textbf{building academic collaborations} that can 
 {% endif %}
 
 {% if mentees %}
-    \section{Supervision}
+    \section{Supervision}\label{sec:supervision}
     {% for location, sub_mentees in mentees.items() %}
     \subsection{@@@ location @@@}
         \begin{itemize}
