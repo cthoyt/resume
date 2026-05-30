@@ -1,5 +1,7 @@
-clean: _clean
-    rm ~/.data/resumator/Q47475003/*.json
+clean: _clean _clean-pdf
+    rm -rf ~/.data/resumator/Q47475003
+
+_clean-pdf:
     rm -f *.pdf
 
 _clean:
@@ -14,5 +16,5 @@ _clean:
 lint:
     uvx ruff format .
 
-build: _clean
+build: _clean _clean-pdf
     sh build.sh
