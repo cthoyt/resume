@@ -55,8 +55,6 @@ CV_OUTPUT_PATH = ROOT.joinpath("cv.tex")
 PUBS_OUTPUT_PATH = ROOT.joinpath("publications.tex")
 FUNDING_OUTPUT_PATH = ROOT.joinpath("funding.tex")
 
-#: Wikidata SPARQL endpoint. See https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service#Interfacing
-WIKIDATA_LEGACY_ENDPOINT = "https://query-legacy-full.wikidata.org/sparql"
 WIKIBASE_LINE = """SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }"""
 
 CHARLIE = "Q47475003"
@@ -130,15 +128,18 @@ class Course(BaseModel):
     code: Optional[str] = None
 
 
-def render_query(template: str, qid: str, *, refresh: bool):
+def render_query(template: str, qid: str, *, refresh: bool, endpoint: str | None = None):
     path = MODULE.join(qid, name=f"{template}.json")
     if path.is_file() and not refresh:
         return json.loads(path.read_text())
 
     sparql = render(f"{template}.rq", qid=qid)
-    print("querying with SPARQL:\n", sparql)
-    rv = wikidata_client.query(sparql, endpoint=WIKIDATA_LEGACY_ENDPOINT)
-    path.write_text(json.dumps(rv, indent=2, sort_keys=True))
+    msg = "querying with SPARQL"
+    if endpoint:
+        msg += f" on {endpoint}"
+    print(f"{msg}\n", sparql)
+    rv = wikidata_client.query(sparql, endpoint=endpoint)
+    path.write_text(json.dumps(rv, indent=2, sort_keys=True, ensure_ascii=False))
     print("writing to", path)
     return rv
 
