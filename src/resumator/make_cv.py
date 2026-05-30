@@ -1,3 +1,5 @@
+#!/usr/bin/env -S uv run --script
+
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
@@ -63,6 +65,7 @@ QID_RE = re.compile(r"^Q\d+$")
 PREPRINT_NAMES = {"chemrxiv", "arxiv", "biorxiv", "medxriv"}
 SKIP_PAPERS = {
     "Q125455971": "this is a duplicate of Q72584451",
+    "Q118780832": "this is the preprint for the MONDO paper, which has a different name on final",
 }
 
 
@@ -90,7 +93,7 @@ class Location(BaseModel):
 class Role(BaseModel):
     name: str
     start: Date
-    end: Date
+    end: Date | None = None
     location: Location
 
 
@@ -128,7 +131,9 @@ class Course(BaseModel):
     code: Optional[str] = None
 
 
-def render_query(template: str, qid: str, *, refresh: bool, endpoint: str | None = None):
+def render_query(
+    template: str, qid: str, *, refresh: bool, endpoint: str | None = None
+):
     path = MODULE.join(qid, name=f"{template}.json")
     if path.is_file() and not refresh:
         return json.loads(path.read_text())
@@ -220,20 +225,20 @@ def get_databases_contributions(qid: str, *, refresh: bool):
 
 def get_reviews(qid: str, *, refresh: bool):
     """Get reviews."""
-    r = render_query("reviews", qid=qid, refresh=refresh)
-    return _process_papers(r)
+    render_query("reviews", qid=qid, refresh=refresh)
+    raise NotImplementedError
 
 
 def get_acknowledgements(qid: str, *, refresh: bool):
     """Get acknowledgements."""
-    r = render_query("acknowledgements", qid=qid, refresh=refresh)
-    return _process_papers(r)
+    render_query("acknowledgements", qid=qid, refresh=refresh)
+    raise NotImplementedError
 
 
 def get_papers(qid: str, *, refresh: bool):
     """Get papers."""
     r = render_query("works", qid=qid, refresh=refresh)
-    return _process_papers(r)
+    return _process_papers(qid, r)
 
 
 def get_events(qid: str, *, refresh: bool):
@@ -248,6 +253,7 @@ def _undict(records: list[dict[str, str]], k: str, v: str) -> dict[str, str]:
 
 
 def _process_papers(
+    qid,
     papers,
     remove_corrigenda: bool = True,
     remove_figshare: bool = True,
@@ -255,11 +261,37 @@ def _process_papers(
 ):
     if remove_missing_venue:
         papers = [p for p in papers if p.get("venue")]
+
+    venues_path = MODULE.join(qid, name="venues.json")
+    if venues_path.is_file():
+        venues = json.loads(venues_path.read_text())
+    else:
+        venue_qids = {venue for paper in papers if (venue := paper.get("venue"))}
+
+        venue_values = " ".join(f"wd:{q}" for q in sorted(venue_qids))
+        venue_sparql = f"""\
+            SELECT ?venue ?venueLabel ?venueShort
+            WHERE {{
+                VALUES ?venue {{{venue_values}}}
+                OPTIONAL {{ ?venue wdt:P1813 ?venueShort }}
+                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }}
+            }}
+        """
+        venues = wikidata_client.query(venue_sparql)
+        venues_path.write_text(json.dumps(venues, indent=2, ensure_ascii=False))
+
+    venues = {d["venue"]: d for d in venues}
+
+    for paper in papers:
+        if paper.get("venue"):
+            paper.update(venues[paper["venue"]])
+
     if remove_corrigenda:
         papers = [
             paper
             for paper in papers
-            if not any(
+            if paper.get("workLabel")
+            and not any(
                 paper["workLabel"].lower().startswith(p)
                 for p in [
                     "corrigendum",
@@ -279,6 +311,7 @@ def _process_papers(
     for paper in papers:
         _clean_pmc(paper)
         _clean_ceurs(paper)
+
     papers = _deduplicate(papers)
     return sorted(papers, key=itemgetter("date"), reverse=True)
 
@@ -365,9 +398,9 @@ def main(qid: str, refresh: bool):
     data = get_attributes(qid, refresh=refresh)
     topics = get_topics(qid, refresh=refresh)
     databases_contributions = get_databases_contributions(qid, refresh=refresh)
-    languages = get_languages(qid, refresh=refresh)
-    reviews = get_reviews(qid, refresh=refresh)
-    acknowledgements = get_acknowledgements(qid, refresh=refresh)
+    # languages = get_languages(qid, refresh=refresh)
+    # reviews = get_reviews(qid, refresh=refresh)
+    # acknowledgements = get_acknowledgements(qid, refresh=refresh)
     employers = get_employers(qid, refresh=refresh)
     remotes = {"Q49121", "Q94505592"}
     for e in employers:
@@ -402,6 +435,7 @@ def main(qid: str, refresh: bool):
         "Q136308907",  # chembl-downloader
         "Q134057813",  # SeMRA preprint
         "Q136408428",  # SeMRA
+        "Q139986539",  # DALIA application
     }
     seniors_or_last = {
         "Q118774035",  # clep
@@ -424,19 +458,23 @@ def main(qid: str, refresh: bool):
         "submitted": "to",
     }
 
-    in_preparation_path = ctdata.joinpath("in_preparation.yml")
-    in_preparation_papers = yaml.safe_load(in_preparation_path.read_text())
-    today_year = str(datetime.date.today().year)
-    for in_preparation_paper in in_preparation_papers or []:
-        in_preparation_paper["date"] = today_year
-        in_preparation_paper["workLabel"] = in_preparation_paper["name"]
-        in_prep_venue = in_preparation_paper.get("venue")
-        status = in_preparation_paper.get("status", "in preparation")
-        if in_prep_venue:
-            in_preparation_paper["venueLabel"] = f"{status} {status_to_preposition[status]} {in_prep_venue}"
-        else:
-            in_preparation_paper["venueLabel"] = status
-        papers_dd[today_year].append(in_preparation_paper)
+    include_in_preparation = False
+    if include_in_preparation:
+        in_preparation_path = ctdata.joinpath("in_preparation.yml")
+        in_preparation_papers = yaml.safe_load(in_preparation_path.read_text())
+        today_year = str(datetime.date.today().year)
+        for in_preparation_paper in in_preparation_papers or []:
+            in_preparation_paper["date"] = today_year
+            in_preparation_paper["workLabel"] = in_preparation_paper["name"]
+            in_prep_venue = in_preparation_paper.get("venue")
+            status = in_preparation_paper.get("status", "in preparation")
+            if in_prep_venue:
+                in_preparation_paper["venueLabel"] = (
+                    f"{status} {status_to_preposition[status]} {in_prep_venue}"
+                )
+            else:
+                in_preparation_paper["venueLabel"] = status
+            papers_dd[today_year].append(in_preparation_paper)
 
     mentees_path = ctdata.joinpath("mentees.yml")
     courses_path = ctdata.joinpath("courses.yml")
